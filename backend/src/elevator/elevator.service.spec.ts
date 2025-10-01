@@ -6,11 +6,10 @@ import {
   ElevatorStatus,
 } from './elevator.interface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ElevatorCreationService } from './elevator-creation/elevator-creation.service';
+import { ElevatorCreationService } from '../elevator-registry/elevator-creation/elevator-creation.service';
 
 describe('ElevatorService', () => {
   let service: ElevatorService;
-  let eventEmitter: EventEmitter2;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,7 +25,6 @@ describe('ElevatorService', () => {
     }).compile();
 
     service = module.get<ElevatorService>(ElevatorService);
-    eventEmitter = module.get<EventEmitter2>(EventEmitter2);
   });
 
   it('should be defined', () => {

@@ -2,12 +2,8 @@ import { Injectable } from '@nestjs/common';
 import {
   Elevator,
   ElevatorDirection,
-  ElevatorDoorState,
-  ElevatorId,
-  ElevatorMotionState,
   ElevatorStatus,
 } from './elevator.interface';
-import { v4 as uuidV4 } from 'uuid';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()

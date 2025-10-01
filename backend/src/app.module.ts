@@ -5,6 +5,7 @@ import { ConfigModule } from '@unifig/nest';
 import { ElevatorModule } from './elevator/elevator.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BuildingModule } from './building/building.module';
+import { ElevatorRegistryModule } from './elevator-registry/elevator-registry.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { BuildingModule } from './building/building.module';
     EventEmitterModule.forRoot(),
     ElevatorModule,
     BuildingModule,
+    ElevatorRegistryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

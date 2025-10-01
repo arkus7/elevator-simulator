@@ -2,6 +2,9 @@
  * Unique identifier for the elevator
  */
 export type ElevatorId = string & { __brand: 'ElevatorId' };
+export const ElevatorId = {
+  fromString: (id: string): ElevatorId => id as ElevatorId,
+};
 
 export enum ElevatorDirection {
   Up = 'up',
