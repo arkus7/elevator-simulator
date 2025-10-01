@@ -14,18 +14,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 export class ElevatorService {
   public constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  public createElevator(): Elevator {
-    return {
-      id: this.generateElevatorId(),
-      currentFloor: 0,
-      direction: ElevatorDirection.Idle,
-      doorState: ElevatorDoorState.Closed,
-      motionState: ElevatorMotionState.Idle,
-      status: ElevatorStatus.Active,
-      destinationFloors: [],
-    };
-  }
-
   /**
    * Target floor of the elevator to which the elevator is moving, null if the elevator is idle
    */
@@ -82,9 +70,5 @@ export class ElevatorService {
     } else {
       return [...floorsBelow, ...floorsAbove];
     }
-  }
-
-  private generateElevatorId(): ElevatorId {
-    return uuidV4() as ElevatorId;
   }
 }

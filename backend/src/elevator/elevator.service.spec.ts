@@ -6,6 +6,7 @@ import {
   ElevatorStatus,
 } from './elevator.interface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ElevatorCreationService } from './elevator-creation/elevator-creation.service';
 
 describe('ElevatorService', () => {
   let service: ElevatorService;
@@ -33,7 +34,7 @@ describe('ElevatorService', () => {
   });
 
   it('should create an elevator', () => {
-    const elevator = service.createElevator();
+    const elevator = ElevatorCreationService.createElevator();
     expect(elevator).toBeDefined();
     expect(elevator.id).toBeDefined();
     expect(elevator.currentFloor).toBe(0);
@@ -44,20 +45,20 @@ describe('ElevatorService', () => {
 
   describe('#scheduleInternalRequest', () => {
     it('should schedule an internal request', () => {
-      const elevator = service.createElevator();
+      const elevator = ElevatorCreationService.createElevator();
       service.scheduleCarRequest(elevator, 1);
       expect(elevator.destinationFloors).toEqual([1]);
     });
 
     it('should not schedule an internal request if the elevator is in maintenance', () => {
-      const elevator = service.createElevator();
+      const elevator = ElevatorCreationService.createElevator();
       elevator.status = ElevatorStatus.Maintenance;
       service.scheduleCarRequest(elevator, 1);
       expect(elevator.destinationFloors).toEqual([]);
     });
 
     it('should not schedule an internal request if the elevator is in error', () => {
-      const elevator = service.createElevator();
+      const elevator = ElevatorCreationService.createElevator();
       elevator.status = ElevatorStatus.Error;
 
       service.scheduleCarRequest(elevator, 1);
@@ -65,7 +66,7 @@ describe('ElevatorService', () => {
     });
 
     it('should not schedule an internal request if the floor is already in the destination floors', () => {
-      const elevator = service.createElevator();
+      const elevator = ElevatorCreationService.createElevator();
       elevator.destinationFloors = [1];
       service.scheduleCarRequest(elevator, 1);
       expect(elevator.destinationFloors).toEqual([1]);
@@ -74,7 +75,7 @@ describe('ElevatorService', () => {
     describe('when the elevator is not idle', () => {
       describe('when the elevator is moving up', () => {
         it('should schedule the request in the correct order', () => {
-          const elevator = service.createElevator();
+          const elevator = ElevatorCreationService.createElevator();
           elevator.direction = ElevatorDirection.Up;
           elevator.currentFloor = 1;
           elevator.destinationFloors = [2, -1];
@@ -83,7 +84,7 @@ describe('ElevatorService', () => {
         });
 
         it('should handle negative floors correctly', () => {
-          const elevator = service.createElevator();
+          const elevator = ElevatorCreationService.createElevator();
           elevator.direction = ElevatorDirection.Up;
           elevator.currentFloor = 1;
           elevator.destinationFloors = [2];
@@ -94,7 +95,7 @@ describe('ElevatorService', () => {
 
       describe('when the elevator is moving down', () => {
         it('should schedule the request in the correct order', () => {
-          const elevator = service.createElevator();
+          const elevator = ElevatorCreationService.createElevator();
           elevator.direction = ElevatorDirection.Down;
           elevator.currentFloor = 1;
           elevator.destinationFloors = [-1, 2];
@@ -103,7 +104,7 @@ describe('ElevatorService', () => {
         });
 
         it('should handle negative floors correctly', () => {
-          const elevator = service.createElevator();
+          const elevator = ElevatorCreationService.createElevator();
           elevator.direction = ElevatorDirection.Down;
           elevator.currentFloor = 1;
           elevator.destinationFloors = [0, 2];
