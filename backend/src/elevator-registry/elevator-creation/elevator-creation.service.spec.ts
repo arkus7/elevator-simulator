@@ -58,5 +58,21 @@ describe('ElevatorCreationService', () => {
       const elevator = ElevatorCreationService.createElevator();
       expect(elevator.status).toBe(ElevatorStatus.Active);
     });
+
+    describe('creating more than 26 elevators', () => {
+      beforeEach(() => {
+        // reset the id counter for the tests
+        (ElevatorCreationService as any).idCounter = 0;
+      });
+
+      it('should generate a unique id after Z', () => {
+        for (let i = 0; i < 26; i++) {
+          ElevatorCreationService.createElevator();
+        }
+        const elevator = ElevatorCreationService.createElevator();
+        expect(elevator.id).toBeDefined();
+        expect(elevator.id).toBe('AA');
+      });
+    });
   });
 });
