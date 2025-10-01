@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
-import { BuildingConfig } from '../src/config/building.config';
+import { AppConfig } from '../src/config/app.config';
 import { Config } from '@unifig/core';
 import { EnvConfigAdapter } from '@unifig/adapter-env';
 
@@ -12,7 +12,7 @@ describe('AppController (e2e)', () => {
 
   beforeEach(async () => {
     await Config.register({
-      templates: [BuildingConfig],
+      templates: [AppConfig],
       adapter: new EnvConfigAdapter(),
     });
     const moduleFixture: TestingModule = await Test.createTestingModule({

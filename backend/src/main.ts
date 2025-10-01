@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { Config } from '@unifig/core';
-import { BuildingConfig } from './config/building.config';
+import { AppConfig } from './config/app.config';
 import { EnvConfigAdapter } from '@unifig/adapter-env';
 import { toTable } from '@unifig/validation-presenter-table';
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const configValidationError = await Config.register({
-    templates: [BuildingConfig],
+    templates: [AppConfig],
     adapter: new EnvConfigAdapter(),
   });
 

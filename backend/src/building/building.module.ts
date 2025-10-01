@@ -1,11 +1,11 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { BuildingService } from './building.service';
 import { ConfigModule } from '@unifig/nest';
-import { BuildingConfig } from '../config/building.config';
+import { AppConfig } from '../config/app.config';
 import { ElevatorRegistryModule } from '../elevator-registry/elevator-registry.module';
 
 @Module({
-  imports: [ConfigModule.forFeature(BuildingConfig), ElevatorRegistryModule],
+  imports: [ConfigModule.forFeature(AppConfig), ElevatorRegistryModule],
   providers: [BuildingService],
   exports: [BuildingService],
 })

@@ -1,7 +1,7 @@
 import { From } from '@unifig/core';
 import { IsInt, Max, Min } from 'class-validator';
 
-export class BuildingConfig {
+export class AppConfig {
   @From({ key: 'ELEVATOR_COUNT', default: 2 })
   @IsInt()
   @Min(1)

@@ -1,18 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import type { ConfigContainer } from '@unifig/core';
 import { InjectConfig } from '@unifig/nest';
-import { BuildingConfig } from '../config/building.config';
+import { AppConfig } from '../config/app.config';
 import { ElevatorCreationService } from '../elevator-registry/elevator-creation/elevator-creation.service';
 import { ElevatorRegistryService } from '../elevator-registry/elevator-registry.service';
-import { Elevator, ElevatorId } from '../elevator/elevator.interface';
 
 @Injectable()
 export class BuildingService {
   private readonly logger = new Logger(BuildingService.name);
 
   public constructor(
-    @InjectConfig(BuildingConfig)
-    private readonly config: ConfigContainer<BuildingConfig>,
+    @InjectConfig(AppConfig)
+    private readonly config: ConfigContainer<AppConfig>,
     private readonly elevatorRegistry: ElevatorRegistryService,
   ) {}
 
@@ -32,9 +31,5 @@ export class BuildingService {
     }
 
     this.logger.debug(`Initialized ${this.elevatorRegistry.size()} elevators`);
-  }
-
-  public getElevator(id: ElevatorId): Elevator | undefined {
-    return this.elevatorRegistry.get(id);
   }
 }

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BuildingService } from './building.service';
-import { BuildingConfig } from '../config/building.config';
+import { AppConfig } from '../config/app.config';
 import { ConfigModule } from '@unifig/nest';
 import { Config } from '@unifig/core';
 import { EnvConfigAdapter } from '@unifig/adapter-env';
@@ -13,14 +13,11 @@ describe('BuildingService', () => {
 
   beforeEach(async () => {
     await Config.register({
-      templates: [BuildingConfig],
+      templates: [AppConfig],
       adapter: new EnvConfigAdapter(),
     });
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forFeature(BuildingConfig),
-        ElevatorRegistryModule,
-      ],
+      imports: [ConfigModule.forFeature(AppConfig), ElevatorRegistryModule],
       providers: [BuildingService],
     }).compile();
 
