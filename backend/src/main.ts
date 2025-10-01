@@ -7,9 +7,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const configValidationError = await Config.register({
-    templates: [
-      BuildingConfig,
-    ],
+    templates: [BuildingConfig],
     adapter: new EnvConfigAdapter(),
   });
 
