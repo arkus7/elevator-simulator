@@ -6,6 +6,8 @@ import { ElevatorModule } from './elevator/elevator.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BuildingModule } from './building/building.module';
 import { ElevatorRegistryModule } from './elevator-registry/elevator-registry.module';
+import { HallModule } from './hall/hall.module';
+import { SchedulerModule } from './scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { ElevatorRegistryModule } from './elevator-registry/elevator-registry.mo
     ElevatorModule,
     BuildingModule,
     ElevatorRegistryModule,
+    HallModule,
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

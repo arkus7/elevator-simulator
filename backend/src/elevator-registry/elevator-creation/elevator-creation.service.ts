@@ -6,7 +6,6 @@ import {
   ElevatorMotionState,
   ElevatorStatus,
 } from '../../elevator/elevator.interface';
-import { v4 as uuidV4 } from 'uuid';
 
 export class ElevatorCreationService {
   private static idCounter = 0;
