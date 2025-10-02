@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ElevatorId } from './elevator.interface';
+import { ElevatorDirection, ElevatorId } from './elevator.interface';
 import {
   ElevatorEvent,
   ElevatorDestinationScheduledEvent,
@@ -10,6 +10,9 @@ import {
   ElevatorDoorOpenedEvent,
   ElevatorDoorClosingEvent,
   ElevatorDoorClosedEvent,
+  ElevatorMotionMovingEvent,
+  ElevatorMotionStoppedEvent,
+  ElevatorMotionIdleEvent,
 } from './elevator-event';
 
 @Injectable()
@@ -65,6 +68,30 @@ export class ElevatorEventEmitterService {
     this.eventEmitter.emit(
       ElevatorEvent.Door.Closed,
       new ElevatorDoorClosedEvent(elevatorId),
+    );
+  }
+
+  public motionMoving(
+    elevatorId: ElevatorId,
+    direction: ElevatorDirection,
+  ): void {
+    this.eventEmitter.emit(
+      ElevatorEvent.Motion.Moving,
+      new ElevatorMotionMovingEvent(elevatorId, direction),
+    );
+  }
+
+  public motionStopped(elevatorId: ElevatorId): void {
+    this.eventEmitter.emit(
+      ElevatorEvent.Motion.Stopped,
+      new ElevatorMotionStoppedEvent(elevatorId),
+    );
+  }
+
+  public motionIdle(elevatorId: ElevatorId): void {
+    this.eventEmitter.emit(
+      ElevatorEvent.Motion.Idle,
+      new ElevatorMotionIdleEvent(elevatorId),
     );
   }
 }

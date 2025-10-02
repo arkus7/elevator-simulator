@@ -18,7 +18,13 @@ describe('HallService', () => {
       adapter: new EnvConfigAdapter(),
     });
     const module: TestingModule = await Test.createTestingModule({
-      imports: [EventEmitterModule.forRoot(), ElevatorRegistryModule, SchedulerModule, BuildingModule, ElevatorModule],
+      imports: [
+        EventEmitterModule.forRoot(),
+        ElevatorRegistryModule,
+        SchedulerModule,
+        BuildingModule,
+        ElevatorModule,
+      ],
       providers: [HallService],
     }).compile();
 

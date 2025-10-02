@@ -1,4 +1,4 @@
-import { ElevatorId } from './elevator.interface';
+import { ElevatorDirection, ElevatorId } from './elevator.interface';
 
 export const ElevatorEvent = {
   Motion: {
@@ -58,5 +58,20 @@ export class ElevatorDoorClosingEvent {
 }
 
 export class ElevatorDoorClosedEvent {
+  constructor(public readonly elevatorId: ElevatorId) {}
+}
+
+export class ElevatorMotionMovingEvent {
+  constructor(
+    public readonly elevatorId: ElevatorId,
+    public readonly direction: ElevatorDirection,
+  ) {}
+}
+
+export class ElevatorMotionStoppedEvent {
+  constructor(public readonly elevatorId: ElevatorId) {}
+}
+
+export class ElevatorMotionIdleEvent {
   constructor(public readonly elevatorId: ElevatorId) {}
 }
