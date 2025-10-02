@@ -15,6 +15,10 @@ import { StatusSimulationService } from './status-simulation/status-simulation.s
     BuildingModule,
     ElevatorModule,
   ],
-  providers: [MotionSimulationService, DoorSimulationService, StatusSimulationService],
+  providers: [
+    MotionSimulationService,
+    DoorSimulationService,
+    StatusSimulationService,
+  ],
 })
 export class SimulationModule {}

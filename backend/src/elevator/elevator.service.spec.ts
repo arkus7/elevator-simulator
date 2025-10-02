@@ -45,7 +45,9 @@ describe('ElevatorService', () => {
     elevatorEventEmitter = module.get<ElevatorEventEmitterService>(
       ElevatorEventEmitterService,
     );
-    config = module.get<ConfigContainer<AppConfig>>(getConfigContainerToken(AppConfig));
+    config = module.get<ConfigContainer<AppConfig>>(
+      getConfigContainerToken(AppConfig),
+    );
   });
 
   it('should be defined', () => {

@@ -27,7 +27,9 @@ export class BuildingService {
     );
 
     for (let i = 0; i < this.config.values.elevatorCount; i++) {
-      const elevator = ElevatorCreationService.createElevator({errorRate: this.config.values.errorRate});
+      const elevator = ElevatorCreationService.createElevator({
+        errorRate: this.config.values.errorRate,
+      });
       this.elevatorRegistry.register(elevator);
     }
 

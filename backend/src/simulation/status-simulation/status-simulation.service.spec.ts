@@ -17,8 +17,13 @@ describe('StatusSimulationService', () => {
       adapter: new EnvConfigAdapter(),
     });
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ElevatorRegistryModule, ElevatorModule, EventEmitterModule.forRoot()],
-      providers: [StatusSimulationService,
+      imports: [
+        ElevatorRegistryModule,
+        ElevatorModule,
+        EventEmitterModule.forRoot(),
+      ],
+      providers: [
+        StatusSimulationService,
         {
           provide: getConfigContainerToken(AppConfig),
           useValue: {
