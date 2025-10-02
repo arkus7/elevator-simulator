@@ -26,7 +26,7 @@ export class ElevatorCarService {
     return this.elevatorService.startClosingDoor(elevator);
   }
 
-  public requestFloor(elevatorId: ElevatorId, floor: number): boolean {
+  public requestFloor(elevatorId: ElevatorId, floor: number): void {
     const elevator = this.getElevator(elevatorId);
     if (!this.buildingService.isValidFloor(floor)) {
       throw new BadRequestException('Invalid floor');

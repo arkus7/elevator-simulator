@@ -70,6 +70,7 @@ export function useElevatorEvents(): UseElevatorEventsReturn {
             doorState: elevator.doorState,
             motionState: elevator.motionState,
             destinationFloors: elevator.destinationFloors,
+            status: elevator.status,
           };
         });
 
@@ -219,6 +220,25 @@ export function useElevatorEvents(): UseElevatorEventsReturn {
             },
           },
         };
+      });
+    });
+
+    // Status Events
+    socketInstance.on('elevator.status.active', (data: { elevatorId: string }) => {
+      updateElevator(data.elevatorId, {
+        status: 'active',
+      });
+    });
+
+    socketInstance.on('elevator.status.error', (data: { elevatorId: string }) => {
+      updateElevator(data.elevatorId, {
+        status: 'error',
+      });
+    });
+
+    socketInstance.on('elevator.status.maintenance', (data: { elevatorId: string }) => {
+      updateElevator(data.elevatorId, {
+        status: 'maintenance',
       });
     });
 

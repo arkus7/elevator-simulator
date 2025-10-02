@@ -113,6 +113,23 @@
   animation: doorTransition 0.5s ease-in-out;
 }
 
+/* Status-based colors (override other states) */
+.elevator-car.status-error {
+  background: linear-gradient(135deg, #E53935, #C62828) !important;
+  border-color: rgba(229, 57, 53, 0.6);
+  box-shadow: 
+    0 4px 16px rgba(229, 57, 53, 0.7),
+    inset 0 2px 8px rgba(255, 255, 255, 0.2);
+}
+
+.elevator-car.status-maintenance {
+  background: linear-gradient(135deg, #FFC107, #FFA000) !important;
+  border-color: rgba(255, 193, 7, 0.6);
+  box-shadow: 
+    0 4px 16px rgba(255, 193, 7, 0.7),
+    inset 0 2px 8px rgba(255, 255, 255, 0.2);
+}
+
 @keyframes pulse {
   0%, 100% { 
     opacity: 1;

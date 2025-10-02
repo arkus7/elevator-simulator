@@ -10,6 +10,7 @@ export interface ElevatorState {
   doorState: 'open' | 'opening' | 'closed' | 'closing';
   motionState: 'moving' | 'stopped' | 'idle';
   destinationFloors: number[];
+  status: 'active' | 'error' | 'maintenance';
 }
 
 export interface BuildingState {

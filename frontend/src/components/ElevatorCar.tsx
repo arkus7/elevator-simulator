@@ -37,6 +37,7 @@ export default function ElevatorCar({ elevator, config }: ElevatorCarProps) {
     elevator.motionState === 'moving' ? 'moving' : '',
     elevator.motionState === 'idle' ? 'idle' : '',
     `doors-${elevator.doorState}`,
+    `status-${elevator.status}`,
   ].filter(Boolean).join(' ');
 
   return (

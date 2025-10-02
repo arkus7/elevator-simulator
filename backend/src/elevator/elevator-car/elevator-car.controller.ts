@@ -52,7 +52,7 @@ export class ElevatorCarController {
   public scheduleFloor(
     @Param('elevatorId') elevatorId: string,
     @Body() dto: ScheduleFloorRequestDto,
-  ): boolean {
+  ): void {
     return this.elevatorCarService.requestFloor(elevatorId, dto.floor);
   }
 }
