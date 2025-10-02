@@ -1,0 +1,123 @@
+/* Call Buttons Column */
+.call-buttons-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.call-buttons-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.call-buttons-container {
+  position: relative;
+  width: 120px;
+  height: 500px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.call-buttons-floors {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.call-buttons-floor {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 4px;
+}
+
+.floor-label-small {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  min-width: 20px;
+}
+
+.buttons-group {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+.call-button {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  backdrop-filter: blur(5px);
+}
+
+.call-button:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+}
+
+.call-button:active {
+  transform: scale(0.95);
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border-color: #4CAF50;
+}
+
+.call-button.up {
+  border-color: rgba(74, 144, 226, 0.5);
+}
+
+.call-button.up:hover {
+  border-color: rgba(74, 144, 226, 1);
+  background: linear-gradient(135deg, rgba(74, 144, 226, 0.4), rgba(74, 144, 226, 0.2));
+}
+
+.call-button.down {
+  border-color: rgba(255, 152, 0, 0.5);
+}
+
+.call-button.down:hover {
+  border-color: rgba(255, 152, 0, 1);
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.4), rgba(255, 152, 0, 0.2));
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .call-buttons-container {
+    width: 90px;
+    height: 400px;
+  }
+  
+  .call-button {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}
+

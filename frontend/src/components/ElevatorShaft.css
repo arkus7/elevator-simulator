@@ -1,0 +1,174 @@
+/* Elevator Shaft */
+.elevator-shaft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.shaft-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.shaft-container {
+  position: relative;
+  width: 160px;
+  height: 500px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.15) calc(100% / var(--total-floors)),
+    transparent calc(100% / var(--total-floors))
+  );
+  background-size: 100% calc(100% / var(--total-floors));
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Floor Markers */
+.floor-markers {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floor-marker {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.floor-marker.ground-floor {
+  background-color: rgba(76, 175, 80, 0.15);
+  font-weight: 700;
+}
+
+.floor-marker.basement {
+  background-color: rgba(158, 158, 158, 0.15);
+}
+
+/* Elevator Car */
+.elevator-car {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75%;
+  height: calc(100% / var(--total-floors) - 6px);
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 2px 8px rgba(255, 255, 255, 0.2);
+  
+  transition: bottom 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  
+  background: linear-gradient(135deg, #4A90E2, #357ABD);
+}
+
+/* Elevator States */
+.elevator-car.moving {
+  animation: pulse 0.8s infinite;
+  box-shadow: 
+    0 4px 12px rgba(74, 144, 226, 0.6),
+    inset 0 2px 8px rgba(255, 255, 255, 0.3);
+}
+
+.elevator-car.idle {
+  background: linear-gradient(135deg, #9E9E9E, #757575);
+}
+
+.elevator-car.doors-open {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+}
+
+.elevator-car.doors-opening,
+.elevator-car.doors-closing {
+  animation: doorTransition 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  50% { 
+    opacity: 0.85;
+    transform: translateX(-50%) scale(0.98);
+  }
+}
+
+@keyframes doorTransition {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.4); }
+  50% { border-color: rgba(255, 255, 255, 0.8); }
+}
+
+/* Elevator Car Content */
+.car-id {
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.direction-indicator {
+  font-size: 24px;
+  color: white;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.door-indicator {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+}
+
+.current-floor {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.destinations {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 2px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .shaft-container {
+    width: 120px;
+    height: 400px;
+  }
+}
+
