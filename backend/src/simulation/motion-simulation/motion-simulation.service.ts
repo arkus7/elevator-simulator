@@ -11,10 +11,7 @@ import {
 } from '../../elevator/elevator-event';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ElevatorRegistryService } from '../../elevator-registry/elevator-registry.service';
-import {
-  Elevator,
-  ElevatorId,
-} from '../../elevator/elevator.interface';
+import { Elevator, ElevatorId } from '../../elevator/elevator.interface';
 import { ElevatorService } from '../../elevator/elevator.service';
 
 @Injectable()
@@ -33,7 +30,9 @@ export class MotionSimulationService {
 
   @OnEvent(ElevatorEvent.Motion.Moving)
   public onMotionMoving(event: ElevatorMotionMovingEvent) {
-    this.logger.log(`Elevator ${event.elevatorId} motion moving ${event.direction}`);
+    this.logger.log(
+      `Elevator ${event.elevatorId} motion moving ${event.direction}`,
+    );
 
     const elevator = this.getElevator(event.elevatorId);
 
@@ -53,7 +52,9 @@ export class MotionSimulationService {
 
   @OnEvent(ElevatorEvent.Motion.FloorReached)
   public onFloorReached(event: ElevatorFloorReachedEvent) {
-    this.logger.log(`Elevator ${event.elevatorId} floor reached: ${event.floor}`);
+    this.logger.log(
+      `Elevator ${event.elevatorId} floor reached: ${event.floor}`,
+    );
   }
 
   @OnEvent(ElevatorEvent.Motion.Idle)

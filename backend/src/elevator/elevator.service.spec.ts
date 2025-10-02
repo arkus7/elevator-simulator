@@ -435,7 +435,7 @@ describe('ElevatorService', () => {
       service.reachedFloor(elevator);
       expect(elevator.currentFloor).toBe(2);
     });
-  
+
     it('should decrement floor when moving down', () => {
       const elevator = createElevator({
         currentFloor: 1,
@@ -446,7 +446,7 @@ describe('ElevatorService', () => {
       service.reachedFloor(elevator);
       expect(elevator.currentFloor).toBe(0);
     });
-  
+
     it('should emit floor reached event', () => {
       jest.spyOn(elevatorEventEmitter, 'floorReached');
       const elevator = createElevator({
@@ -461,7 +461,7 @@ describe('ElevatorService', () => {
         1,
       );
     });
-  
+
     it('should call reachedDestination when at destination floor', () => {
       const elevator = createElevator({
         currentFloor: 0,
@@ -474,7 +474,7 @@ describe('ElevatorService', () => {
       expect(elevator.doorState).toBe(ElevatorDoorState.Opening);
       expect(elevator.motionState).toBe(ElevatorMotionState.Stopped);
     });
-  
+
     it('should continue moving if not at destination', () => {
       jest.spyOn(elevatorEventEmitter, 'motionMoving');
       const elevator = createElevator({
@@ -506,7 +506,7 @@ describe('ElevatorService', () => {
       service.reachedFloor(elevator);
       expect(elevator.currentFloor).toBe(1);
     });
-  
+
     it('should do nothing if elevator is stopped', () => {
       const elevator = createElevator({
         currentFloor: 1,

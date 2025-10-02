@@ -143,7 +143,6 @@ export class ElevatorService {
   }
 
   private reachedDestination(elevator: Elevator): void {
-
     elevator.motionState = ElevatorMotionState.Stopped;
     this.elevatorEventEmitter.motionStopped(elevator.id);
 

@@ -1,0 +1,7 @@
+POST http://localhost:3000/hall/call-elevator
+Content-Type: application/json
+
+{
+  "floor": 2,
+  "direction": "up"
+}

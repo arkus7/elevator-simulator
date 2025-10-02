@@ -18,14 +18,17 @@ describe('BuildingService', () => {
     });
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forFeature(AppConfig), ElevatorRegistryModule],
-      providers: [BuildingService, {
-        provide: getConfigContainerToken(AppConfig),
-        useValue: {
-          values: {
-            elevatorCount: 2,
+      providers: [
+        BuildingService,
+        {
+          provide: getConfigContainerToken(AppConfig),
+          useValue: {
+            values: {
+              elevatorCount: 2,
+            },
           },
-        }
-      }],
+        },
+      ],
     }).compile();
 
     service = module.get<BuildingService>(BuildingService);

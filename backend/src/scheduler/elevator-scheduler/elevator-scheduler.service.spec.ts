@@ -12,11 +12,18 @@ import {
 } from '../../elevator/elevator.interface';
 import { ElevatorModule } from '../../elevator/elevator.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { Config } from '@unifig/core';
+import { EnvConfigAdapter } from '@unifig/adapter-env';
+import { AppConfig } from '../../config/app.config';
 
 describe('ElevatorSchedulerService', () => {
   let service: ElevatorSchedulerService;
 
   beforeEach(async () => {
+    await Config.register({
+      templates: [AppConfig],
+      adapter: new EnvConfigAdapter(),
+    });
     const module: TestingModule = await Test.createTestingModule({
       imports: [EventEmitterModule.forRoot(), ElevatorModule],
       providers: [ElevatorSchedulerService],

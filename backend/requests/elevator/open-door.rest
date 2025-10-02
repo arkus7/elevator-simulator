@@ -1,0 +1,2 @@
+POST http://localhost:3000/elevator-car/A/open-door
+Content-Type: application/json

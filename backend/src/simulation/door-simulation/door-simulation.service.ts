@@ -11,10 +11,7 @@ import {
   ElevatorDoorOpeningEvent,
   ElevatorEvent,
 } from '../../elevator/elevator-event';
-import {
-  Elevator,
-  ElevatorId,
-} from '../../elevator/elevator.interface';
+import { Elevator, ElevatorId } from '../../elevator/elevator.interface';
 import { ElevatorService } from '../../elevator/elevator.service';
 
 @Injectable()
