@@ -19,6 +19,11 @@ async function bootstrap(): Promise<void> {
 
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Elevator Simulator')
     .setDescription('The elevator simulator API')

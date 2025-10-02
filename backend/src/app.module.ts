@@ -9,6 +9,7 @@ import { ElevatorRegistryModule } from './elevator-registry/elevator-registry.mo
 import { HallModule } from './hall/hall.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
 import { SimulationModule } from './simulation/simulation.module';
+import { WebsocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SimulationModule } from './simulation/simulation.module';
     HallModule,
     SchedulerModule,
     SimulationModule,
+    WebsocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
