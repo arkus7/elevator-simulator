@@ -5,6 +5,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { Config } from '@unifig/core';
 import { EnvConfigAdapter } from '@unifig/adapter-env';
 import { AppConfig } from '../../config/app.config';
+import { ElevatorModule } from '../../elevator/elevator.module';
 
 describe('MotionSimulationService', () => {
   let service: MotionSimulationService;
@@ -15,7 +16,7 @@ describe('MotionSimulationService', () => {
       adapter: new EnvConfigAdapter(),
     });
     const module: TestingModule = await Test.createTestingModule({
-      imports: [EventEmitterModule.forRoot(), SimulationModule],
+      imports: [EventEmitterModule.forRoot(), SimulationModule, ElevatorModule],
     }).compile();
 
     service = module.get<MotionSimulationService>(MotionSimulationService);

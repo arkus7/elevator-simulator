@@ -39,6 +39,10 @@ export class ElevatorService {
 
     this.elevatorEventEmitter.destinationScheduled(elevator.id, floor);
 
+    if (elevator.motionState === ElevatorMotionState.Idle) {
+      this.startMoving(elevator);
+    }
+
     return true;
   }
 
@@ -97,10 +101,6 @@ export class ElevatorService {
       );
     }
 
-    if (elevator.motionState === ElevatorMotionState.Moving) {
-      return;
-    }
-
     if (elevator.destinationFloors.length === 0) {
       this.becomeIdle(elevator);
       return;
@@ -113,7 +113,7 @@ export class ElevatorService {
       elevator.direction = ElevatorDirection.Down;
     } else {
       // Already at destination
-      this.startOpeningDoor(elevator);
+      this.reachedDestination(elevator);
       return;
     }
 
@@ -143,9 +143,6 @@ export class ElevatorService {
   }
 
   private reachedDestination(elevator: Elevator): void {
-    if (elevator.motionState !== ElevatorMotionState.Moving) {
-      return;
-    }
 
     elevator.motionState = ElevatorMotionState.Stopped;
     this.elevatorEventEmitter.motionStopped(elevator.id);

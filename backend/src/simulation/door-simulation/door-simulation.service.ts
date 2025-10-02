@@ -5,14 +5,17 @@ import { InjectConfig } from '@unifig/nest';
 import { AppConfig } from '../../config/app.config';
 import { ElevatorRegistryService } from '../../elevator-registry/elevator-registry.service';
 import {
-  ElevatorDestinationReachedEvent,
   ElevatorDoorClosedEvent,
   ElevatorDoorClosingEvent,
   ElevatorDoorOpenedEvent,
+  ElevatorDoorOpeningEvent,
   ElevatorEvent,
 } from '../../elevator/elevator-event';
-import { ElevatorDoorState, ElevatorId } from '../../elevator/elevator.interface';
-import { ElevatorEventEmitterService } from '../../elevator/elevator-event-emitter.service';
+import {
+  Elevator,
+  ElevatorId,
+} from '../../elevator/elevator.interface';
+import { ElevatorService } from '../../elevator/elevator.service';
 
 @Injectable()
 export class DoorSimulationService {
@@ -24,28 +27,21 @@ export class DoorSimulationService {
   public constructor(
     @InjectConfig(AppConfig)
     private readonly config: ConfigContainer<AppConfig>,
-    private readonly elevatorEventEmitter: ElevatorEventEmitterService,
     private readonly elevatorRegistryService: ElevatorRegistryService,
+    private readonly elevatorService: ElevatorService,
   ) {}
 
-  @OnEvent(ElevatorEvent.Destination.Reached)
-  public onDestinationReached(event: ElevatorDestinationReachedEvent) {
-    this.logger.log(
-      `Elevator ${event.elevatorId} reached destination: ${event.destination}, opening doors`,
-    );
+  @OnEvent(ElevatorEvent.Door.Opening)
+  public onDoorOpening(event: ElevatorDoorOpeningEvent) {
+    this.logger.log(`Elevator ${event.elevatorId} doors opening`);
 
-    const elevator = this.elevatorRegistryService.get(event.elevatorId);
-    if (!elevator) {
-      this.logger.error(`Elevator ${event.elevatorId} not found`);
-      return;
-    }
+    const elevator = this.getElevator(event.elevatorId);
 
-    elevator.doorState = ElevatorDoorState.Opening;
     this.doorTimeouts.set(
       elevator.id,
       setTimeout(() => {
-        elevator.doorState = ElevatorDoorState.Open;
-        this.elevatorEventEmitter.doorOpened(elevator.id);
+        this.doorTimeouts.delete(elevator.id);
+        this.elevatorService.completeOpeningDoor(elevator);
       }, this.config.values.doorOpenCloseTimeMs),
     );
   }
@@ -54,17 +50,13 @@ export class DoorSimulationService {
   public onDoorOpened(event: ElevatorDoorOpenedEvent) {
     this.logger.log(`Elevator ${event.elevatorId} doors opened`);
 
-    const elevator = this.elevatorRegistryService.get(event.elevatorId);
-    if (!elevator) {
-      this.logger.error(`Elevator ${event.elevatorId} not found`);
-      return;
-    }
+    const elevator = this.getElevator(event.elevatorId);
 
     this.doorTimeouts.set(
       elevator.id,
       setTimeout(() => {
-        elevator.doorState = ElevatorDoorState.Closing;
-        this.elevatorEventEmitter.doorClosing(elevator.id);
+        this.doorTimeouts.delete(elevator.id);
+        this.elevatorService.startClosingDoor(elevator);
       }, this.config.values.doorHoldTimeMs),
     );
   }
@@ -73,17 +65,13 @@ export class DoorSimulationService {
   public onDoorClosing(event: ElevatorDoorClosingEvent) {
     this.logger.log(`Elevator ${event.elevatorId} doors closing`);
 
-    const elevator = this.elevatorRegistryService.get(event.elevatorId);
-    if (!elevator) {
-      this.logger.error(`Elevator ${event.elevatorId} not found`);
-      return;
-    }
+    const elevator = this.getElevator(event.elevatorId);
 
     this.doorTimeouts.set(
       elevator.id,
       setTimeout(() => {
-        elevator.doorState = ElevatorDoorState.Closed;
-        this.elevatorEventEmitter.doorClosed(elevator.id);
+        this.doorTimeouts.delete(elevator.id);
+        this.elevatorService.completeClosingDoor(elevator);
       }, this.config.values.doorOpenCloseTimeMs),
     );
   }
@@ -91,14 +79,14 @@ export class DoorSimulationService {
   @OnEvent(ElevatorEvent.Door.Closed)
   public onDoorClosed(event: ElevatorDoorClosedEvent) {
     this.logger.log(`Elevator ${event.elevatorId} doors closed`);
+  }
 
-    const elevator = this.elevatorRegistryService.get(event.elevatorId);
+  private getElevator(elevatorId: ElevatorId): Elevator {
+    const elevator = this.elevatorRegistryService.get(elevatorId);
     if (!elevator) {
-      this.logger.error(`Elevator ${event.elevatorId} not found`);
-      return;
+      this.logger.error(`Elevator ${elevatorId} not found`);
+      throw new Error(`Elevator ${elevatorId} not found`);
     }
-
-    elevator.doorState = ElevatorDoorState.Closed;
-    this.doorTimeouts.delete(elevator.id);
+    return elevator;
   }
 }

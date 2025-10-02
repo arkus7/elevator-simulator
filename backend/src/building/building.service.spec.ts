@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BuildingService } from './building.service';
 import { AppConfig } from '../config/app.config';
-import { ConfigModule } from '@unifig/nest';
+import { ConfigModule, getConfigContainerToken } from '@unifig/nest';
 import { Config } from '@unifig/core';
 import { EnvConfigAdapter } from '@unifig/adapter-env';
 import { ElevatorRegistryModule } from '../elevator-registry/elevator-registry.module';
@@ -18,7 +18,14 @@ describe('BuildingService', () => {
     });
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forFeature(AppConfig), ElevatorRegistryModule],
-      providers: [BuildingService],
+      providers: [BuildingService, {
+        provide: getConfigContainerToken(AppConfig),
+        useValue: {
+          values: {
+            elevatorCount: 2,
+          },
+        }
+      }],
     }).compile();
 
     service = module.get<BuildingService>(BuildingService);

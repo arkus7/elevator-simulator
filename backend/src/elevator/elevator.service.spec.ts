@@ -311,6 +311,8 @@ describe('ElevatorService', () => {
     it('should not change the motion state if the elevator is already moving', () => {
       const elevator = createElevator({
         motionState: ElevatorMotionState.Moving,
+        destinationFloors: [1],
+        currentFloor: 0,
       });
       service.startMoving(elevator);
       expect(elevator.motionState).toBe(ElevatorMotionState.Moving);
