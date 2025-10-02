@@ -496,6 +496,24 @@ describe('ElevatorService', () => {
       expect(elevator.doorState).toBe(ElevatorDoorState.Opening);
     });
 
+    it('should do nothing if elevator is not moving', () => {
+      const elevator = createElevator({
+        currentFloor: 1,
+        motionState: ElevatorMotionState.Idle,
+      });
+      service.reachedFloor(elevator);
+      expect(elevator.currentFloor).toBe(1);
+    });
+  
+    it('should do nothing if elevator is stopped', () => {
+      const elevator = createElevator({
+        currentFloor: 1,
+        motionState: ElevatorMotionState.Stopped,
+      });
+      service.reachedFloor(elevator);
+      expect(elevator.currentFloor).toBe(1);
+    });
+
     describe('event emission', () => {
       describe('when reached destination', () => {
         it('should emit motion stopped event', () => {
