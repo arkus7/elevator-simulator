@@ -112,6 +112,7 @@ The frontend communicates with the backend using the REST API and WebSocket.
 
 ## Tech stack
 
+- Node.js v24.9.0
 - NestJS
 - TypeScript
 - EventEmitter
