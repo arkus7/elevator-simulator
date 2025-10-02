@@ -32,8 +32,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://localhost:3000
-        - VITE_WS_URL=http://localhost:3000
+        - VITE_API_URL
+        - VITE_WS_URL
     container_name: elevator-frontend
     ports:
       - "3005:80"
