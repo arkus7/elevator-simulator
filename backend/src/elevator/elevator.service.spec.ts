@@ -579,14 +579,18 @@ describe('ElevatorService', () => {
 
   describe('#startMaintenance', () => {
     it('should set elevator status to maintenance', () => {
-      const elevator = createElevator();
+      const elevator = createElevator({
+          status: ElevatorStatus.Error,
+      });
       service.startMaintenance(elevator);
       expect(elevator.status).toBe(ElevatorStatus.Maintenance);
     });
 
     it('should emit status maintenance event', () => {
       jest.spyOn(elevatorEventEmitter, 'statusMaintenance');
-      const elevator = createElevator();
+      const elevator = createElevator({
+        status: ElevatorStatus.Error,
+      });
       service.startMaintenance(elevator);
       expect(elevatorEventEmitter.statusMaintenance).toHaveBeenCalledWith(
         elevator.id,
@@ -601,15 +605,6 @@ describe('ElevatorService', () => {
       });
       service.completeMaintenance(elevator);
       expect(elevator.status).toBe(ElevatorStatus.Active);
-    });
-
-    it('should set destination to ground floor', () => {
-      const elevator = createElevator({
-        status: ElevatorStatus.Maintenance,
-        currentFloor: 5,
-      });
-      service.completeMaintenance(elevator);
-      expect(elevator.destinationFloors).toEqual([0]);
     });
 
     it('should emit status active event', () => {
@@ -627,6 +622,7 @@ describe('ElevatorService', () => {
       jest.spyOn(elevatorEventEmitter, 'motionMoving');
       const elevator = createElevator({
         status: ElevatorStatus.Maintenance,
+        destinationFloors: [3],
         currentFloor: 5,
       });
       service.completeMaintenance(elevator);
@@ -673,15 +669,6 @@ describe('ElevatorService', () => {
         });
         service.startMoving(elevator);
         expect(elevator.doorState).toBe(ElevatorDoorState.Closed);
-      });
-
-      it('should clear destination floors when error occurs', () => {
-        const elevator = createElevator({
-          errorRate: 1,
-          destinationFloors: [1, 2, 3],
-        });
-        service.startMoving(elevator);
-        expect(elevator.destinationFloors).toEqual([]);
       });
 
       it('should emit status error event when error occurs', () => {
