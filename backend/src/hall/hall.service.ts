@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import {
   CallElevatorRequestDto,
   CallElevatorResponseDto,
@@ -22,15 +27,21 @@ export class HallService {
       `Calling elevator to floor ${dto.floor} in direction ${dto.direction}`,
     );
     if (!this.buildingService.isValidFloor(dto.floor)) {
-      // TODO: Throw custom error
-
       this.logger.error(`Invalid floor: ${dto.floor}`);
-      throw new Error('Invalid floor');
+      throw new BadRequestException('Invalid floor');
     }
-    const elevator = this.elevatorSchedulerService.assignElevatorToHallRequest(
-      { direction: dto.direction, floor: dto.floor },
-      this.elevatorRegistryService.getAll(),
-    );
-    return { elevatorId: elevator };
+    try {
+      const elevator =
+        this.elevatorSchedulerService.assignElevatorToHallRequest(
+          { direction: dto.direction, floor: dto.floor },
+          this.elevatorRegistryService.getAll(),
+        );
+      return { elevatorId: elevator };
+    } catch (err) {
+      this.logger.error(`Error assigning elevator to hall request: ${err}`);
+      throw new InternalServerErrorException(
+        'Error assigning elevator to hall request',
+      );
+    }
   }
 }
