@@ -2,6 +2,11 @@
 
 An elevator control system simulator with real-time updates via WebSockets.
 
+## Live Demo
+
+Live demo: https://elevator-sim.arkus.space/
+API Docs: https://elevator-sim-api.arkus.space/swagger
+
 ## Project Structure
 
 - **backend/** - NestJS backend API with WebSocket support
