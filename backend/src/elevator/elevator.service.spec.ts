@@ -7,6 +7,7 @@ import {
 } from './elevator.interface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ElevatorCreationService } from '../elevator-registry/elevator-creation/elevator-creation.service';
+import { ElevatorEventEmitterService } from './elevator-event-emitter.service';
 
 describe('ElevatorService', () => {
   let service: ElevatorService;
@@ -15,6 +16,7 @@ describe('ElevatorService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ElevatorService,
+        ElevatorEventEmitterService,
         {
           provide: EventEmitter2,
           useValue: {

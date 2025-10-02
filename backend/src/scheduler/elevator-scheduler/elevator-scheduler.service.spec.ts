@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ElevatorSchedulerService, HallRequest } from './elevator-scheduler.service';
+import {
+  ElevatorSchedulerService,
+  HallRequest,
+} from './elevator-scheduler.service';
 import {
   Elevator,
   ElevatorDirection,
@@ -7,12 +10,15 @@ import {
   ElevatorDoorState,
   ElevatorMotionState,
 } from '../../elevator/elevator.interface';
+import { ElevatorModule } from '../../elevator/elevator.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('ElevatorSchedulerService', () => {
   let service: ElevatorSchedulerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [EventEmitterModule.forRoot(), ElevatorModule],
       providers: [ElevatorSchedulerService],
     }).compile();
 

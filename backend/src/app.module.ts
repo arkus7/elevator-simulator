@@ -8,6 +8,7 @@ import { BuildingModule } from './building/building.module';
 import { ElevatorRegistryModule } from './elevator-registry/elevator-registry.module';
 import { HallModule } from './hall/hall.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
+import { SimulationModule } from './simulation/simulation.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SchedulerModule } from './scheduler/scheduler.module';
     ElevatorRegistryModule,
     HallModule,
     SchedulerModule,
+    SimulationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

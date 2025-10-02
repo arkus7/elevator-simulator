@@ -14,12 +14,15 @@ export interface HallRequest {
 @Injectable()
 export class ElevatorSchedulerService {
   private readonly logger = new Logger(ElevatorSchedulerService.name);
-  public constructor(private readonly elevatorService: ElevatorService) {
-    
-  }
+  public constructor(private readonly elevatorService: ElevatorService) {}
 
-  public assignElevatorToHallRequest(request: HallRequest, elevators: Elevator[]): string {
-    this.logger.log(`Assigning elevator to hall request on floor ${request.floor} in direction ${request.direction}`);
+  public assignElevatorToHallRequest(
+    request: HallRequest,
+    elevators: Elevator[],
+  ): string {
+    this.logger.log(
+      `Assigning elevator to hall request on floor ${request.floor} in direction ${request.direction}`,
+    );
     const activeElevators = elevators.filter(
       (e) => e.status === ElevatorStatus.Active,
     );
@@ -34,6 +37,7 @@ export class ElevatorSchedulerService {
 
     for (const elevator of activeElevators) {
       const score = this.calculateScore(elevator, request);
+      this.logger.log(`Score for elevator ${elevator.id}: ${score}`);
       if (score < bestScore) {
         bestScore = score;
         bestElevator = elevator;
@@ -45,12 +49,18 @@ export class ElevatorSchedulerService {
       throw new Error('No best elevator found');
     }
 
-    this.logger.log(`Selected elevator ${bestElevator.id} for hall request on floor ${request.floor} in direction ${request.direction}`);
+    this.logger.log(
+      `Selected elevator ${bestElevator.id} for hall request on floor ${request.floor} in direction ${request.direction}`,
+    );
     this.logger.log(`Score: ${bestScore}`);
 
-    this.logger.log(`Scheduling car request on floor ${request.floor} for elevator ${bestElevator.id}`);
+    this.logger.log(
+      `Scheduling car request on floor ${request.floor} for elevator ${bestElevator.id}`,
+    );
     this.elevatorService.scheduleCarRequest(bestElevator, request.floor);
-    this.logger.log(`Car request scheduled on floor ${request.floor} for elevator ${bestElevator.id}`);
+    this.logger.log(
+      `Car request scheduled on floor ${request.floor} for elevator ${bestElevator.id}`,
+    );
 
     return bestElevator.id;
   }
@@ -59,16 +69,22 @@ export class ElevatorSchedulerService {
     const { currentFloor, direction } = elevator;
     const { floor: requestFloor } = request;
 
+    this.logger.debug(
+      `Current floor: ${currentFloor}, direction: ${direction}, request floor: ${requestFloor}`,
+    );
+
     // Idle elevator - distance is direct
     if (
       direction === ElevatorDirection.Idle ||
       this.isElevatorMovingInSameDirection(elevator, request)
     ) {
+      this.logger.debug('Idle or moving in same direction');
       return Math.abs(requestFloor - currentFloor);
     }
 
     // Elevator moving in same direction but request is behind
     if (this.isRequestBehindElevator(elevator, request)) {
+      this.logger.debug('Request is behind elevator');
       // needs to complete current direction first, then reverse
       const furthestDestination = this.getFurthestDestination(elevator);
       const distanceToFurthest = Math.abs(furthestDestination - currentFloor);
@@ -78,6 +94,7 @@ export class ElevatorSchedulerService {
       return distanceToFurthest + distanceFromFurthestToRequest;
     }
 
+    this.logger.debug('Elevator moving opposite direction');
     // Elevator moving opposite direction - need to complete, reverse, then serve
     const furthestDestination = this.getFurthestDestination(elevator);
     const distanceToFurthest = Math.abs(furthestDestination - currentFloor);
@@ -110,10 +127,10 @@ export class ElevatorSchedulerService {
     return (
       (direction === ElevatorDirection.Up &&
         requestDirection === ElevatorDirection.Up &&
-        requestFloor > currentFloor) ||
+        requestFloor >= currentFloor) ||
       (direction === ElevatorDirection.Down &&
         requestDirection === ElevatorDirection.Down &&
-        requestFloor < currentFloor)
+        requestFloor <= currentFloor)
     );
   }
 

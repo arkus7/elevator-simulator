@@ -32,4 +32,11 @@ export class BuildingService {
 
     this.logger.debug(`Initialized ${this.elevatorRegistry.size()} elevators`);
   }
+
+  public isValidFloor(floor: number): boolean {
+    const minFloor = this.config.values.undergroundFloors * -1;
+    const maxFloor = this.config.values.aboveGroundFloors;
+
+    return floor >= minFloor && floor <= maxFloor;
+  }
 }

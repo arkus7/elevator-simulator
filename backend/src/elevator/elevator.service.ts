@@ -4,11 +4,13 @@ import {
   ElevatorDirection,
   ElevatorStatus,
 } from './elevator.interface';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ElevatorEventEmitterService } from './elevator-event-emitter.service';
 
 @Injectable()
 export class ElevatorService {
-  public constructor(private readonly eventEmitter: EventEmitter2) {}
+  public constructor(
+    private readonly elevatorEventEmitter: ElevatorEventEmitterService,
+  ) {}
 
   /**
    * Target floor of the elevator to which the elevator is moving, null if the elevator is idle
@@ -33,7 +35,7 @@ export class ElevatorService {
       direction: elevator.direction,
     });
 
-    // TODO: Emit event about internal request scheduled
+    this.elevatorEventEmitter.destinationScheduled(elevator.id, floor);
 
     return true;
   }
