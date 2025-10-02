@@ -15,7 +15,7 @@ export class HallController {
   constructor(private readonly hallService: HallService) {}
 
   @Post('/call-elevator')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary:
       'Call an elevator to a selected floor, specifying direction. Returns the ID of the elevator that will service the request.',

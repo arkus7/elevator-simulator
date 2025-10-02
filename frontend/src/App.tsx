@@ -2,34 +2,65 @@ import './App.css'
 import ElevatorShaft from './ElevatorShaft'
 import CallButtons from './components/CallButtons'
 import { useElevatorEvents } from './hooks/useElevatorEvents'
+import * as api from './utils/api'
+import { useState } from 'react'
 
 function App() {
   const { connected, buildingState, error, loading } = useElevatorEvents();
+  const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
-  const handleCallElevator = (floor: number, direction: 'up' | 'down') => {
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleCallElevator = async (floor: number, direction: 'up' | 'down') => {
     console.log(`Calling elevator to floor ${floor}, direction: ${direction}`);
-    // TODO: Make API call to backend
-    // POST /hall/call with { floor, direction }
+    try {
+      const response = await api.callElevator(floor, direction);
+      console.log(response); 
+      showNotification('success', `Elevator ${response.elevatorId} is on its way to floor ${floor}`);
+    } catch (error) {
+      console.error('Failed to call elevator:', error);
+      const message = error instanceof api.ApiError ? error.message : 'Failed to call elevator';
+      showNotification('error', message);
+    }
   };
 
-  const handleOpenDoor = (elevatorId: string) => {
+  const handleOpenDoor = async (elevatorId: string) => {
     console.log(`Opening door for ${elevatorId}`);
-    // TODO: Make API call to backend
-    // POST /elevators/{elevatorId}/open-door
+    try {
+      await api.openDoor(elevatorId);
+      showNotification('success', `Opening door for elevator ${elevatorId}`);
+    } catch (error) {
+      console.error('Failed to open door:', error);
+      const message = error instanceof api.ApiError ? error.message : 'Failed to open door';
+      showNotification('error', message);
+    }
   };
 
-  const handleCloseDoor = (elevatorId: string) => {
+  const handleCloseDoor = async (elevatorId: string) => {
     console.log(`Closing door for ${elevatorId}`);
-    // TODO: Make API call to backend
-    // POST /elevators/{elevatorId}/close-door
+    try {
+      await api.closeDoor(elevatorId);
+      showNotification('success', `Closing door for elevator ${elevatorId}`);
+    } catch (error) {
+      console.error('Failed to close door:', error);
+      const message = error instanceof api.ApiError ? error.message : 'Failed to close door';
+      showNotification('error', message);
+    }
   };
 
-  const handleSelectFloor = (elevatorId: string, floor: number) => {
+  const handleSelectFloor = async (elevatorId: string, floor: number) => {
     console.log(`${elevatorId} selecting floor ${floor}`);
-    // TODO: Make API call to backend
-    // POST /elevators/{elevatorId}/schedule with { floor }
-
-    
+    try {
+      await api.scheduleFloor(elevatorId, floor);
+      showNotification('success', `Floor ${floor} scheduled for elevator ${elevatorId}`);
+    } catch (error) {
+      console.error('Failed to schedule floor:', error);
+      const message = error instanceof api.ApiError ? error.message : 'Failed to schedule floor';
+      showNotification('error', message);
+    }
   };
 
   return (
@@ -38,6 +69,12 @@ function App() {
         <h1>🏢 Elevator Simulator</h1>
         <p className="subtitle">Real-time Building Visualization</p>
       </header>
+
+      {notification && (
+        <div className={`notification notification-${notification.type}`}>
+          {notification.type === 'success' ? '✓' : '⚠'} {notification.message}
+        </div>
+      )}
 
       <main className="building-container">
         {loading || !buildingState ? (
