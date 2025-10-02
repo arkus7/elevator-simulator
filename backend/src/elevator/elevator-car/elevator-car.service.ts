@@ -34,6 +34,11 @@ export class ElevatorCarService {
     return this.elevatorService.scheduleCarRequest(elevator, floor);
   }
 
+  public startMaintenance(elevatorId: ElevatorId): void {
+    const elevator = this.getElevator(elevatorId);
+    return this.elevatorService.startMaintenance(elevator);
+  }
+
   private getElevator(elevatorId: ElevatorId): Elevator {
     const elevator = this.elevatorRegistryService.get(elevatorId);
     if (!elevator) {

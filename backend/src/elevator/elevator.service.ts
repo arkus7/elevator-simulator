@@ -99,7 +99,7 @@ export class ElevatorService {
 
   public startMoving(elevator: Elevator): void {
     this.guardIsOperational(elevator);
-    
+
     if (elevator.doorState !== ElevatorDoorState.Closed) {
       return;
     }
@@ -201,7 +201,6 @@ export class ElevatorService {
       elevator.motionState = ElevatorMotionState.Idle;
       elevator.direction = ElevatorDirection.Idle;
       elevator.doorState = ElevatorDoorState.Closed;
-      elevator.destinationFloors = [];
       this.elevatorEventEmitter.statusError(elevator.id);
       return true;
     }
@@ -209,12 +208,14 @@ export class ElevatorService {
   }
 
   public startMaintenance(elevator: Elevator): void {
+    if (elevator.status !== ElevatorStatus.Error) {
+      return;
+    }
     elevator.status = ElevatorStatus.Maintenance;
     this.elevatorEventEmitter.statusMaintenance(elevator.id);
   }
 
   public completeMaintenance(elevator: Elevator): void {
-    elevator.destinationFloors = [0];
     elevator.status = ElevatorStatus.Active;
     this.elevatorEventEmitter.statusActive(elevator.id);
     this.startMoving(elevator);

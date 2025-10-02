@@ -55,4 +55,13 @@ export class ElevatorCarController {
   ): void {
     return this.elevatorCarService.requestFloor(elevatorId, dto.floor);
   }
+
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ summary: 'Request maintenance for an elevator' })
+  @ApiAcceptedResponse({ description: 'Elevator will enter maintenance mode' })
+  @ApiNotFoundResponse({ description: 'Elevator with provided ID not found' })
+  @Post('/:elevatorId/request-maintenance')
+  public startMaintenance(@Param('elevatorId') elevatorId: string): void {
+    return this.elevatorCarService.startMaintenance(elevatorId);
+  }
 }

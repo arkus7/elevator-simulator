@@ -10,6 +10,7 @@ interface ElevatorShaftProps {
   onOpenDoor: (elevatorId: string) => void;
   onCloseDoor: (elevatorId: string) => void;
   onSelectFloor: (elevatorId: string, floor: number) => void;
+  onRequestMaintenance: (elevatorId: string) => void;
 }
 
 export default function ElevatorShaft({ 
@@ -17,7 +18,8 @@ export default function ElevatorShaft({
   config, 
   onOpenDoor, 
   onCloseDoor, 
-  onSelectFloor 
+  onSelectFloor,
+  onRequestMaintenance,
 }: ElevatorShaftProps) {
   const totalFloors = config.maxFloor - config.minFloor + 1;
   
@@ -40,6 +42,7 @@ export default function ElevatorShaft({
         onOpenDoor={onOpenDoor}
         onCloseDoor={onCloseDoor}
         onSelectFloor={onSelectFloor}
+        onRequestMaintenance={onRequestMaintenance}
       />
     </div>
   );

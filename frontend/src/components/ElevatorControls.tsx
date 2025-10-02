@@ -8,6 +8,7 @@ interface ElevatorControlsProps {
   onOpenDoor: (elevatorId: string) => void;
   onCloseDoor: (elevatorId: string) => void;
   onSelectFloor: (elevatorId: string, floor: number) => void;
+  onRequestMaintenance: (elevatorId: string) => void;
 }
 
 export default function ElevatorControls({
@@ -16,6 +17,7 @@ export default function ElevatorControls({
   onOpenDoor,
   onCloseDoor,
   onSelectFloor,
+  onRequestMaintenance,
 }: ElevatorControlsProps) {
   const { minFloor, maxFloor } = config;
   
@@ -48,6 +50,18 @@ export default function ElevatorControls({
             <span className="button-label">Close</span>
           </button>
         </div>
+      </div>
+
+      {/* Maintenance Control */}
+      <div className="maintenance-controls">
+        <button
+          className="control-button maintenance-button"
+          onClick={() => onRequestMaintenance(elevatorId)}
+          title="Request maintenance"
+        >
+          <span className="button-icon">🔧</span>
+          <span className="button-label">Maintenance</span>
+        </button>
       </div>
 
       {/* Floor Selection */}

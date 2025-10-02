@@ -107,6 +107,15 @@ export async function closeDoor(elevatorId: string): Promise<void> {
 }
 
 /**
+ * Request maintenance mode for a specific elevator
+ */
+export async function requestMaintenance(elevatorId: string): Promise<void> {
+  await apiFetch<void>(`/elevator-car/${elevatorId}/request-maintenance`, {
+    method: 'POST',
+  });
+}
+
+/**
  * Get the current building state
  */
 export async function getBuildingState(): Promise<any> {

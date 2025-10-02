@@ -63,6 +63,18 @@ function App() {
     }
   };
 
+  const handleMaintenanceRequested = async (elevatorId: string) => {
+    console.log(`Requesting maintenance for ${elevatorId}`);
+    try {
+      await api.requestMaintenance(elevatorId);
+      showNotification('success', `Maintenance requested for elevator ${elevatorId}`);
+    } catch (error) {
+      console.error('Failed to start maintenance:', error);
+      const message = error instanceof api.ApiError ? error.message : 'Failed to start maintenance';
+      showNotification('error', message);
+    }
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -103,6 +115,7 @@ function App() {
                 onOpenDoor={handleOpenDoor}
                 onCloseDoor={handleCloseDoor}
                 onSelectFloor={handleSelectFloor}
+                onRequestMaintenance={handleMaintenanceRequested}
               />
             ))}
             <CallButtons
