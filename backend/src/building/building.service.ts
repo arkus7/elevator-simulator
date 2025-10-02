@@ -4,6 +4,7 @@ import { InjectConfig } from '@unifig/nest';
 import { AppConfig } from '../config/app.config';
 import { ElevatorCreationService } from '../elevator-registry/elevator-creation/elevator-creation.service';
 import { ElevatorRegistryService } from '../elevator-registry/elevator-registry.service';
+import { BuildingStateResponseDto } from './dto/building-state-response.dto';
 
 @Injectable()
 export class BuildingService {
@@ -31,6 +32,29 @@ export class BuildingService {
     }
 
     this.logger.debug(`Initialized ${this.elevatorRegistry.size()} elevators`);
+  }
+
+  public getBuildingState(): BuildingStateResponseDto {
+    const elevators = this.elevatorRegistry.getAll();
+    const minFloor = this.config.values.undergroundFloors * -1;
+    const maxFloor = this.config.values.aboveGroundFloors;
+
+    return {
+      config: {
+        minFloor,
+        maxFloor,
+        elevatorCount: this.config.values.elevatorCount,
+      },
+      elevators: elevators.map((elevator) => ({
+        id: elevator.id,
+        currentFloor: elevator.currentFloor,
+        direction: elevator.direction,
+        doorState: elevator.doorState,
+        motionState: elevator.motionState,
+        destinationFloors: elevator.destinationFloors,
+        status: elevator.status,
+      })),
+    };
   }
 
   public isValidFloor(floor: number): boolean {

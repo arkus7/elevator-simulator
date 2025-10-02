@@ -1,0 +1,3 @@
+GET http://localhost:3000/building/state
+Content-Type: application/json
+
