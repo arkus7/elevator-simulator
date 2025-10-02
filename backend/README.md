@@ -1,98 +1,167 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Elevator Simulator - Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This is the backend for the Elevator Simulator. It is responsible for the following:
 
-## Description
+- REST API for elevator control system
+- WebSocket for real-time state updates
+- Local state management
+- Error handling
+- Logging
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Based on the configuration, application creates the elevators inside the building and provides the REST API for controlling them.
+REST API provides a way to control the elevators from the hall and inside the elevator.
+WebSocket provides a way to get the real-time state updates of the elevators, so the frontend can update the UI to the current state of the elevators and react to the events like door opening/closing, elevator moving, etc.
 
-## Project setup
+### Handling elevator state changes
 
-```bash
-$ npm install
+The elevator state is managed by the `ElevatorService` in the `elevator` module. It is responsible for the elevator state and the elevator movement. The elevator state is decoupled from the simulation logic, so it can be tested independently.
+
+Elevator keeps track of the current floor, direction, door state, motion state, destination floors and status.
+
+Whenever the elevator state changes, the `ElevatorService` emits an event via `ElevatorEventEmitterService` in the `elevator` module. Those events are handled then by:
+- `ElevatorEventsGateway` in the `websocket` module, which broadcasts the event to the WebSocket clients
+- `SimulationModule` in the `simulation` module, which handles the simulation of the elevator movement and door opening/closing based on the timings from the configuration
+
+#### Door state
+
+Door state keeps track of the current door state of the elevator. The door work in a state machine, which is described in the `ElevatorDoorState` enum in the `elevator.interface.ts` file.
+
+The state machine is described in the following diagram:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Closed
+    Closed --> Opening
+    Opening --> Open
+    Open --> Closing
+    Closing --> Closed
 ```
 
-## Compile and run the project
+Only when the door is closed, the elevator can move.
 
-```bash
-# development
-$ npm run start
+#### Motion state
 
-# watch mode
-$ npm run start:dev
+Motion state represents the current motion state of the elevator. The motion state work in a state machine, which is described in the `ElevatorMotionState` enum in the `elevator.interface.ts` file.
 
-# production mode
-$ npm run start:prod
+The state machine is described in the following diagram:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Moving
+    Moving --> Stopped
+    Stopped --> Moving
+    Stopped --> Idle
 ```
 
-## Run tests
+When the elevator is moving, it can be stopped at a floor. When the elevator is stopped, it can either move again (start another request) or become idle (no more requests).
 
-```bash
-# unit tests
-$ npm run test
+#### Direction
 
-# e2e tests
-$ npm run test:e2e
+Direction represents the current direction of the elevator. The direction can be up, down or idle (when the elevator has no requests). The direction is set when the elevator starts moving to the target floor.
 
-# test coverage
-$ npm run test:cov
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Up
+    Idle --> Down
+    Up --> Down
+    Up --> Idle
+    Down --> Up
+    Down --> Idle
 ```
 
-## Deployment
+#### Destination floors
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Destination floors represents the floors that the elevator is going to visit in the order they are scheduled. The destination floors are set when the elevator is scheduled to move to a floor.
+When the elevator is idle, the destination floors are empty.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Algorithm for sorting the destination floors can be found in the `sortDestinations` method in the `elevator.service.ts` file.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+#### Status
+
+Status represents the current status of the elevator. The status can be active, error or maintenance. 
+
+```mermaid
+stateDiagram-v2
+    [*] --> Active
+    Active --> Error
+    Maintenance --> Active
+    Error --> Maintenance
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The elevator can get to error state randomly.
 
-## Resources
+The elevator gets to maintenance state when the elevator is getting fixed.
 
-Check out a few resources that may come in handy when working with NestJS:
+When the elevator is in active state, it can be used to serve requests.
+When the elevator is in error or maintenance state, it cannot be used to serve requests. 
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Simulating elevator movement and door opening/closing
 
-## Support
+The simulation logic is handled by the `SimulationModule` in the `simulation` module, specifically by the `MotionSimulationService` and `DoorSimulationService` in the `motion-simulation` and `door-simulation` submodules. It is responsible for the simulation of the elevator movement and door opening/closing based on the timings from the configuration using `setTimeout` and `clearTimeout`.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Communication with the frontend
 
-## Stay in touch
+The frontend communicates with the backend using the REST API and WebSocket.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- REST API is used to control the elevators from the hall and inside the elevator
+- WebSocket is used to get the real-time state updates of the elevators (just subscribing to the events, no requests are made to the backend)
 
-## License
+## Tech stack
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- NestJS
+- TypeScript
+- EventEmitter
+- Unifig
+- WebSocket (Socket.IO)
+- Jest
+- Swagger
+- Docker & Docker Compose
+
+## Project Structure
+
+- `src/` - Source code
+- `requests/` - Request files for testing
+
+### Modules
+
+- `building/` - Building module, responsible for the building configuration and state
+- `elevator/` - Elevator module, responsible for the elevator state
+- `elevator-registry/` - Elevator registry module, responsible for creating and keeping track of elevators
+- `hall/` - Hall module, responsible for the requests to elevators from the hall
+- `scheduler/` - Scheduler module, responsible for scheduling hall requests to elevators
+- `simulation/` - Simulation module, provides the simulation of the elevator movement and door opening/closing
+- `websocket/` - WebSocket module, exposes the WebSocket server for real-time state updates of elevators
+
+### Tests
+
+There are some unit tests for core functionality, like elevator movement and door opening/closing (managing the elevator state) and for the WebSocket gateway.
+
+To run the tests, use the following command:
+```bash
+npm test
+```
+
+## Quick Start
+
+```bash
+npm install
+npm run start:dev
+```
+
+## API Documentation
+
+API documentation is available at http://localhost:3000/swagger
+
+## Development
+
+For development, you can use the following command:
+```bash
+npm run start:dev
+```
+
+This will start the server in development mode with hot reloading.
+
