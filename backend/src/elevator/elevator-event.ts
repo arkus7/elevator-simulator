@@ -76,3 +76,15 @@ export class ElevatorMotionStoppedEvent {
 export class ElevatorMotionIdleEvent {
   constructor(public readonly elevatorId: ElevatorId) {}
 }
+
+export class ElevatorStatusActiveEvent {
+  constructor(public readonly elevatorId: ElevatorId) {}
+}
+
+export class ElevatorStatusErrorEvent {
+  constructor(public readonly elevatorId: ElevatorId) {}
+}
+
+export class ElevatorStatusMaintenanceEvent {
+  constructor(public readonly elevatorId: ElevatorId) {}
+}

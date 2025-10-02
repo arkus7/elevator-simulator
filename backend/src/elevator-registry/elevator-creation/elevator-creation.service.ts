@@ -10,7 +10,7 @@ import {
 export class ElevatorCreationService {
   private static idCounter = 0;
 
-  public static createElevator(): Elevator {
+  public static createElevator({errorRate = 0}: {errorRate?: number} = {}): Elevator {
     return {
       id: this.generateElevatorId(),
       currentFloor: 0,
@@ -19,6 +19,7 @@ export class ElevatorCreationService {
       motionState: ElevatorMotionState.Idle,
       status: ElevatorStatus.Active,
       destinationFloors: [],
+      errorRate,
     };
   }
 

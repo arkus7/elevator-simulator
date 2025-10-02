@@ -8,13 +8,16 @@ import {
   ElevatorStatus,
 } from './elevator.interface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ElevatorCreationService } from '../elevator-registry/elevator-creation/elevator-creation.service';
 import { ElevatorEventEmitterService } from './elevator-event-emitter.service';
 import { BadRequestException } from '@nestjs/common';
+import { AppConfig } from '../config/app.config';
+import { getConfigContainerToken } from '@unifig/nest';
+import { ConfigContainer } from '@unifig/core';
 
 describe('ElevatorService', () => {
   let service: ElevatorService;
   let elevatorEventEmitter: ElevatorEventEmitterService;
+  let config: ConfigContainer<AppConfig>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +30,14 @@ describe('ElevatorService', () => {
             emit: jest.fn(),
           },
         },
+        {
+          provide: getConfigContainerToken(AppConfig),
+          useValue: {
+            values: {
+              errorRate: 0,
+            },
+          },
+        },
       ],
     }).compile();
 
@@ -34,6 +45,7 @@ describe('ElevatorService', () => {
     elevatorEventEmitter = module.get<ElevatorEventEmitterService>(
       ElevatorEventEmitterService,
     );
+    config = module.get<ConfigContainer<AppConfig>>(getConfigContainerToken(AppConfig));
   });
 
   it('should be defined', () => {
@@ -50,16 +62,18 @@ describe('ElevatorService', () => {
     it('should not schedule an car request if the elevator is in maintenance', () => {
       const elevator = createElevator();
       elevator.status = ElevatorStatus.Maintenance;
-      service.scheduleCarRequest(elevator, 1);
-      expect(elevator.destinationFloors).toEqual([]);
+      expect(() => service.scheduleCarRequest(elevator, 1)).toThrow(
+        BadRequestException,
+      );
     });
 
     it('should not schedule an car request if the elevator is in error', () => {
       const elevator = createElevator();
       elevator.status = ElevatorStatus.Error;
 
-      service.scheduleCarRequest(elevator, 1);
-      expect(elevator.destinationFloors).toEqual([]);
+      expect(() => service.scheduleCarRequest(elevator, 1)).toThrow(
+        BadRequestException,
+      );
     });
 
     it('should not schedule an car request if the floor is already in the destination floors', () => {
@@ -560,6 +574,147 @@ describe('ElevatorService', () => {
       });
     });
   });
+
+  describe('#startMaintenance', () => {
+    it('should set elevator status to maintenance', () => {
+      const elevator = createElevator();
+      service.startMaintenance(elevator);
+      expect(elevator.status).toBe(ElevatorStatus.Maintenance);
+    });
+
+    it('should emit status maintenance event', () => {
+      jest.spyOn(elevatorEventEmitter, 'statusMaintenance');
+      const elevator = createElevator();
+      service.startMaintenance(elevator);
+      expect(elevatorEventEmitter.statusMaintenance).toHaveBeenCalledWith(
+        elevator.id,
+      );
+    });
+  });
+
+  describe('#completeMaintenance', () => {
+    it('should set elevator status to active', () => {
+      const elevator = createElevator({
+        status: ElevatorStatus.Maintenance,
+      });
+      service.completeMaintenance(elevator);
+      expect(elevator.status).toBe(ElevatorStatus.Active);
+    });
+
+    it('should set destination to ground floor', () => {
+      const elevator = createElevator({
+        status: ElevatorStatus.Maintenance,
+        currentFloor: 5,
+      });
+      service.completeMaintenance(elevator);
+      expect(elevator.destinationFloors).toEqual([0]);
+    });
+
+    it('should emit status active event', () => {
+      jest.spyOn(elevatorEventEmitter, 'statusActive');
+      const elevator = createElevator({
+        status: ElevatorStatus.Maintenance,
+      });
+      service.completeMaintenance(elevator);
+      expect(elevatorEventEmitter.statusActive).toHaveBeenCalledWith(
+        elevator.id,
+      );
+    });
+
+    it('should start moving the elevator', () => {
+      jest.spyOn(elevatorEventEmitter, 'motionMoving');
+      const elevator = createElevator({
+        status: ElevatorStatus.Maintenance,
+        currentFloor: 5,
+      });
+      service.completeMaintenance(elevator);
+      expect(elevator.motionState).toBe(ElevatorMotionState.Moving);
+      expect(elevator.direction).toBe(ElevatorDirection.Down);
+    });
+  });
+
+  describe('error handling', () => {
+    describe('checkForError (via startMoving)', () => {
+      it('should set elevator status to error when error occurs', () => {
+        const elevator = createElevator({
+          errorRate: 1,
+          destinationFloors: [1],
+        });
+        service.startMoving(elevator);
+        expect(elevator.status).toBe(ElevatorStatus.Error);
+      });
+
+      it('should set motion state to idle when error occurs', () => {
+        const elevator = createElevator({
+          errorRate: 1,
+          destinationFloors: [1],
+        });
+        service.startMoving(elevator);
+        expect(elevator.motionState).toBe(ElevatorMotionState.Idle);
+      });
+
+      it('should set direction to idle when error occurs', () => {
+        const elevator = createElevator({
+          errorRate: 1,
+          destinationFloors: [1],
+          direction: ElevatorDirection.Up,
+        });
+        service.startMoving(elevator);
+        expect(elevator.direction).toBe(ElevatorDirection.Idle);
+      });
+
+      it('should close doors when error occurs', () => {
+        const elevator = createElevator({
+          errorRate: 1,
+          destinationFloors: [1],
+          doorState: ElevatorDoorState.Closed,
+        });
+        service.startMoving(elevator);
+        expect(elevator.doorState).toBe(ElevatorDoorState.Closed);
+      });
+
+      it('should clear destination floors when error occurs', () => {
+        const elevator = createElevator({
+          errorRate: 1,
+          destinationFloors: [1, 2, 3],
+        });
+        service.startMoving(elevator);
+        expect(elevator.destinationFloors).toEqual([]);
+      });
+
+      it('should emit status error event when error occurs', () => {
+        jest.spyOn(elevatorEventEmitter, 'statusError');
+        const elevator = createElevator({
+          errorRate: 1,
+          destinationFloors: [1],
+        });
+        service.startMoving(elevator);
+        expect(elevatorEventEmitter.statusError).toHaveBeenCalledWith(
+          elevator.id,
+        );
+      });
+
+      it('should not start moving when error occurs', () => {
+        jest.spyOn(elevatorEventEmitter, 'motionMoving');
+        const elevator = createElevator({
+          errorRate: 1,
+          destinationFloors: [1],
+        });
+        service.startMoving(elevator);
+        expect(elevatorEventEmitter.motionMoving).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger error when errorRate is 0', () => {
+        const elevator = createElevator({
+          errorRate: 0,
+          destinationFloors: [1],
+        });
+        service.startMoving(elevator);
+        expect(elevator.status).toBe(ElevatorStatus.Active);
+        expect(elevator.motionState).toBe(ElevatorMotionState.Moving);
+      });
+    });
+  });
 });
 
 function createElevator(overrides: Partial<Elevator> = {}): Elevator {
@@ -571,5 +726,6 @@ function createElevator(overrides: Partial<Elevator> = {}): Elevator {
     motionState: overrides.motionState ?? ElevatorMotionState.Idle,
     destinationFloors: overrides.destinationFloors ?? [],
     status: overrides.status ?? ElevatorStatus.Active,
+    errorRate: overrides.errorRate ?? 0,
   };
 }

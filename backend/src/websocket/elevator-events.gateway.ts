@@ -19,6 +19,9 @@ import type {
   ElevatorMotionMovingEvent,
   ElevatorMotionStoppedEvent,
   ElevatorMotionIdleEvent,
+  ElevatorStatusActiveEvent,
+  ElevatorStatusMaintenanceEvent,
+  ElevatorStatusErrorEvent,
 } from '../elevator/elevator-event';
 
 @WebSocketGateway({
@@ -143,6 +146,32 @@ export class ElevatorEventsGateway
     this.emitElevatorEvent(ElevatorEvent.Destination.Reached, {
       elevatorId: event.elevatorId,
       destination: event.destination,
+    });
+  }
+
+  // Status
+
+  @OnEvent(ElevatorEvent.Status.Active)
+  public handleStatusActive(event: ElevatorStatusActiveEvent): void {
+    this.logger.debug(`Status Active: Elevator ${event.elevatorId}`);
+    this.emitElevatorEvent(ElevatorEvent.Status.Active, {
+      elevatorId: event.elevatorId,
+    });
+  }
+
+  @OnEvent(ElevatorEvent.Status.Error)
+  public handleStatusError(event: ElevatorStatusErrorEvent): void {
+    this.logger.debug(`Status Error: Elevator ${event.elevatorId}`);
+    this.emitElevatorEvent(ElevatorEvent.Status.Error, {
+      elevatorId: event.elevatorId,
+    });
+  }
+
+  @OnEvent(ElevatorEvent.Status.Maintenance)
+  public handleStatusMaintenance(event: ElevatorStatusMaintenanceEvent): void {
+    this.logger.debug(`Status Maintenance: Elevator ${event.elevatorId}`);
+    this.emitElevatorEvent(ElevatorEvent.Status.Maintenance, {
+      elevatorId: event.elevatorId,
     });
   }
 

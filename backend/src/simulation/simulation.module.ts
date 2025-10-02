@@ -6,6 +6,7 @@ import { ConfigModule } from '@unifig/nest';
 import { ElevatorRegistryModule } from '../elevator-registry/elevator-registry.module';
 import { BuildingModule } from '../building/building.module';
 import { ElevatorModule } from '../elevator/elevator.module';
+import { StatusSimulationService } from './status-simulation/status-simulation.service';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { ElevatorModule } from '../elevator/elevator.module';
     BuildingModule,
     ElevatorModule,
   ],
-  providers: [MotionSimulationService, DoorSimulationService],
+  providers: [MotionSimulationService, DoorSimulationService, StatusSimulationService],
 })
 export class SimulationModule {}

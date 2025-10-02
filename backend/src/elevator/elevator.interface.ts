@@ -108,4 +108,11 @@ export interface Elevator {
    * If the elevator status is {@link ElevatorStatus.Error} or {@link ElevatorStatus.Maintenance}, the elevator should not be used.
    */
   status: ElevatorStatus;
+
+  /**
+   * Error rate of the elevator, indicates the probability of the elevator getting into error state.
+   *
+   * The error rate is a number between 0 and 1, where 0 means no errors and 1 means error every time.
+   */
+  errorRate: number;
 }

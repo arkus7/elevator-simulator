@@ -1,5 +1,5 @@
 import { From } from '@unifig/core';
-import { IsInt, Max, Min } from 'class-validator';
+import { IsInt, IsNumber, Max, Min } from 'class-validator';
 
 export class AppConfig {
   @From({ key: 'ELEVATOR_COUNT', default: 2 })
@@ -35,4 +35,16 @@ export class AppConfig {
   @Min(100)
   @Max(10000)
   doorHoldTimeMs: number;
+
+  @From({ key: 'ERROR_RATE', default: 0.1 })
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  errorRate: number;
+
+  @From({ key: 'MAINTENANCE_FIX_TIME_MS', default: 5000 })
+  @IsInt()
+  @Min(100)
+  @Max(10000)
+  maintenanceFixTimeMs: number;
 }

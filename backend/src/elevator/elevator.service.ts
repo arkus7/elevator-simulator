@@ -21,13 +21,11 @@ export class ElevatorService {
     return elevator.destinationFloors[0] ?? null;
   }
 
-  public scheduleCarRequest(elevator: Elevator, floor: number): boolean {
-    if (elevator.status !== ElevatorStatus.Active) {
-      return false;
-    }
+  public scheduleCarRequest(elevator: Elevator, floor: number): void {
+    this.guardIsOperational(elevator);
 
     if (elevator.destinationFloors.includes(floor)) {
-      return true;
+      return;
     }
 
     elevator.destinationFloors.push(floor);
@@ -46,11 +44,10 @@ export class ElevatorService {
     if (elevator.motionState === ElevatorMotionState.Idle) {
       this.startMoving(elevator);
     }
-
-    return true;
   }
 
   public startOpeningDoor(elevator: Elevator): void {
+    this.guardIsOperational(elevator);
     if (elevator.motionState === ElevatorMotionState.Moving) {
       throw new BadRequestException('Cannot open door while moving');
     }
@@ -78,6 +75,8 @@ export class ElevatorService {
   }
 
   public startClosingDoor(elevator: Elevator): void {
+    this.guardIsOperational(elevator);
+
     if (elevator.doorState !== ElevatorDoorState.Open) {
       throw new BadRequestException(
         'Cannot close door while doors are not open',
@@ -99,7 +98,13 @@ export class ElevatorService {
   }
 
   public startMoving(elevator: Elevator): void {
+    this.guardIsOperational(elevator);
+    
     if (elevator.doorState !== ElevatorDoorState.Closed) {
+      return;
+    }
+
+    if (this.checkForError(elevator)) {
       return;
     }
 
@@ -187,6 +192,37 @@ export class ElevatorService {
       return [...floorsAbove, ...floorsBelow];
     } else {
       return [...floorsBelow, ...floorsAbove];
+    }
+  }
+
+  private checkForError(elevator: Elevator): boolean {
+    if (Math.random() < elevator.errorRate) {
+      elevator.status = ElevatorStatus.Error;
+      elevator.motionState = ElevatorMotionState.Idle;
+      elevator.direction = ElevatorDirection.Idle;
+      elevator.doorState = ElevatorDoorState.Closed;
+      elevator.destinationFloors = [];
+      this.elevatorEventEmitter.statusError(elevator.id);
+      return true;
+    }
+    return false;
+  }
+
+  public startMaintenance(elevator: Elevator): void {
+    elevator.status = ElevatorStatus.Maintenance;
+    this.elevatorEventEmitter.statusMaintenance(elevator.id);
+  }
+
+  public completeMaintenance(elevator: Elevator): void {
+    elevator.destinationFloors = [0];
+    elevator.status = ElevatorStatus.Active;
+    this.elevatorEventEmitter.statusActive(elevator.id);
+    this.startMoving(elevator);
+  }
+
+  private guardIsOperational(elevator: Elevator): void {
+    if (elevator.status !== ElevatorStatus.Active) {
+      throw new BadRequestException('Elevator is not operational');
     }
   }
 }

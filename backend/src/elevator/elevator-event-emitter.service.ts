@@ -13,6 +13,9 @@ import {
   ElevatorMotionMovingEvent,
   ElevatorMotionStoppedEvent,
   ElevatorMotionIdleEvent,
+  ElevatorStatusMaintenanceEvent,
+  ElevatorStatusErrorEvent,
+  ElevatorStatusActiveEvent,
 } from './elevator-event';
 
 @Injectable()
@@ -97,6 +100,27 @@ export class ElevatorEventEmitterService {
     this.eventEmitter.emit(
       ElevatorEvent.Motion.Idle,
       new ElevatorMotionIdleEvent(elevatorId),
+    );
+  }
+
+  public statusActive(elevatorId: ElevatorId): void {
+    this.eventEmitter.emit(
+      ElevatorEvent.Status.Active,
+      new ElevatorStatusActiveEvent(elevatorId),
+    );
+  }
+
+  public statusError(elevatorId: ElevatorId): void {
+    this.eventEmitter.emit(
+      ElevatorEvent.Status.Error,
+      new ElevatorStatusErrorEvent(elevatorId),
+    );
+  }
+
+  public statusMaintenance(elevatorId: ElevatorId): void {
+    this.eventEmitter.emit(
+      ElevatorEvent.Status.Maintenance,
+      new ElevatorStatusMaintenanceEvent(elevatorId),
     );
   }
 }
