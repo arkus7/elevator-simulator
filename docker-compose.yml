@@ -34,7 +34,7 @@ services:
         - VITE_WS_URL=http://localhost:3000
     container_name: elevator-frontend
     ports:
-      - "80:80"
+      - "3005:80"
     depends_on:
       - backend
     restart: unless-stopped

@@ -29,7 +29,7 @@ An elevator control system simulator with real-time updates via WebSockets.
    ```
 
 4. Access the application:
-   - Frontend: http://localhost
+   - Frontend: http://localhost:3005
    - Backend API: http://localhost:3000
    - API Documentation: http://localhost:3000/swagger
 
