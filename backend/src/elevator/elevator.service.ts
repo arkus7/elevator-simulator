@@ -37,7 +37,11 @@ export class ElevatorService {
       direction: elevator.direction,
     });
 
-    this.elevatorEventEmitter.destinationScheduled(elevator.id, floor, elevator.destinationFloors);
+    this.elevatorEventEmitter.destinationScheduled(
+      elevator.id,
+      floor,
+      elevator.destinationFloors,
+    );
 
     if (elevator.motionState === ElevatorMotionState.Idle) {
       this.startMoving(elevator);

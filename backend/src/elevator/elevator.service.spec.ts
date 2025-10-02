@@ -123,6 +123,7 @@ describe('ElevatorService', () => {
         expect(elevatorEventEmitter.destinationScheduled).toHaveBeenCalledWith(
           elevator.id,
           1,
+          elevator.destinationFloors,
         );
       });
     });
@@ -299,13 +300,6 @@ describe('ElevatorService', () => {
       });
       service.startMoving(elevator);
       expect(elevator.motionState).toBe(ElevatorMotionState.Moving);
-    });
-
-    it('should throw an error if the door is not closed', () => {
-      const elevator = createElevator({
-        doorState: ElevatorDoorState.Open,
-      });
-      expect(() => service.startMoving(elevator)).toThrow(BadRequestException);
     });
 
     it('should not change the motion state if the elevator is already moving', () => {

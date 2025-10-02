@@ -5,9 +5,7 @@ import { BuildingStateResponseDto } from './dto/building-state-response.dto';
 
 @Controller('building')
 export class BuildingController {
-  constructor(
-    private readonly buildingService: BuildingService,
-  ) {}
+  constructor(private readonly buildingService: BuildingService) {}
 
   @Get('state')
   @ApiOperation({
@@ -21,4 +19,3 @@ export class BuildingController {
     return this.buildingService.getBuildingState();
   }
 }
-

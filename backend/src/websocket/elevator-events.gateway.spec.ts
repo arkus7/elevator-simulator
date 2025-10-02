@@ -130,7 +130,7 @@ describe('ElevatorEventsGateway', () => {
       expect(mockServer.emit).toHaveBeenCalledWith(
         ElevatorEvent.Door.Opening,
         expect.objectContaining({
-          type: ElevatorEvent.Door.Opening, 
+          type: ElevatorEvent.Door.Opening,
           elevatorId: 'elevator-1',
           timestamp: expect.any(String),
         }),
@@ -158,7 +158,7 @@ describe('ElevatorEventsGateway', () => {
       expect(mockServer.emit).toHaveBeenCalledWith(
         ElevatorEvent.Door.Closing,
         expect.objectContaining({
-          type: ElevatorEvent.Door.Closing, 
+          type: ElevatorEvent.Door.Closing,
           elevatorId: 'elevator-1',
           timestamp: expect.any(String),
         }),

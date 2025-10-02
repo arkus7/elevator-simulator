@@ -46,7 +46,8 @@ export class ElevatorSchedulerService {
 
     if (!bestElevator) {
       // select random elevator
-      bestElevator = activeElevators[Math.floor(Math.random() * activeElevators.length)];
+      bestElevator =
+        activeElevators[Math.floor(Math.random() * activeElevators.length)];
     }
 
     this.logger.log(

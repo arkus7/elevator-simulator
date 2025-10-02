@@ -26,7 +26,11 @@ export class ElevatorEventEmitterService {
   ): void {
     this.eventEmitter.emit(
       ElevatorEvent.Destination.Scheduled,
-      new ElevatorDestinationScheduledEvent(elevatorId, destination, destinationFloors),
+      new ElevatorDestinationScheduledEvent(
+        elevatorId,
+        destination,
+        destinationFloors,
+      ),
     );
   }
 

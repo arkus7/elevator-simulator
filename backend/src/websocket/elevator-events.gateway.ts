@@ -21,7 +21,6 @@ import type {
   ElevatorMotionIdleEvent,
 } from '../elevator/elevator-event';
 
-
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -121,7 +120,9 @@ export class ElevatorEventsGateway
   // Destination
 
   @OnEvent(ElevatorEvent.Destination.Scheduled)
-  public handleDestinationScheduled(event: ElevatorDestinationScheduledEvent): void {
+  public handleDestinationScheduled(
+    event: ElevatorDestinationScheduledEvent,
+  ): void {
     this.logger.debug(
       `Destination Scheduled: Elevator ${event.elevatorId} scheduled to floor ${event.destination}`,
     );
@@ -133,7 +134,9 @@ export class ElevatorEventsGateway
   }
 
   @OnEvent(ElevatorEvent.Destination.Reached)
-  public handleDestinationReached(event: ElevatorDestinationReachedEvent): void {
+  public handleDestinationReached(
+    event: ElevatorDestinationReachedEvent,
+  ): void {
     this.logger.debug(
       `Destination Reached: Elevator ${event.elevatorId} reached destination floor ${event.destination}`,
     );
