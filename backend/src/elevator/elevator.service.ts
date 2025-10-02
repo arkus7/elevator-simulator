@@ -37,7 +37,7 @@ export class ElevatorService {
       direction: elevator.direction,
     });
 
-    this.elevatorEventEmitter.destinationScheduled(elevator.id, floor);
+    this.elevatorEventEmitter.destinationScheduled(elevator.id, floor, elevator.destinationFloors);
 
     if (elevator.motionState === ElevatorMotionState.Idle) {
       this.startMoving(elevator);
@@ -96,9 +96,7 @@ export class ElevatorService {
 
   public startMoving(elevator: Elevator): void {
     if (elevator.doorState !== ElevatorDoorState.Closed) {
-      throw new BadRequestException(
-        'Cannot move elevator while doors are not closed',
-      );
+      return;
     }
 
     if (elevator.destinationFloors.length === 0) {

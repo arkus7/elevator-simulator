@@ -22,10 +22,11 @@ export class ElevatorEventEmitterService {
   public destinationScheduled(
     elevatorId: ElevatorId,
     destination: number,
+    destinationFloors: number[],
   ): void {
     this.eventEmitter.emit(
       ElevatorEvent.Destination.Scheduled,
-      new ElevatorDestinationScheduledEvent(elevatorId, destination),
+      new ElevatorDestinationScheduledEvent(elevatorId, destination, destinationFloors),
     );
   }
 

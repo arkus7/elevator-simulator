@@ -167,7 +167,7 @@ export function useElevatorEvents(): UseElevatorEventsReturn {
     });
 
     // Destination Events
-    socketInstance.on('elevator.destination.scheduled', (data: { elevatorId: string; destination: number }) => {
+    socketInstance.on('elevator.destination.scheduled', (data: { elevatorId: string; destination: number; destinationFloors: number[] }) => {
       setBuildingState((prevState) => {
         if (!prevState) {
           console.warn(`Received destination event for ${data.elevatorId} before initial state loaded`);
@@ -179,8 +179,6 @@ export function useElevatorEvents(): UseElevatorEventsReturn {
           console.error(`Received destination event for unknown elevator: ${data.elevatorId}`);
           return prevState;
         }
-
-        const newDestinations = [...elevator.destinationFloors, data.destination];
         
         return {
           ...prevState,
@@ -188,7 +186,7 @@ export function useElevatorEvents(): UseElevatorEventsReturn {
             ...prevState.elevators,
             [data.elevatorId]: {
               ...elevator,
-              destinationFloors: newDestinations,
+              destinationFloors: data.destinationFloors,
             },
           },
         };

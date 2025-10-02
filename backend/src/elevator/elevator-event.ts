@@ -28,6 +28,7 @@ export class ElevatorDestinationScheduledEvent {
   constructor(
     public readonly elevatorId: ElevatorId,
     public readonly destination: number,
+    public readonly destinationFloors: number[],
   ) {}
 }
 

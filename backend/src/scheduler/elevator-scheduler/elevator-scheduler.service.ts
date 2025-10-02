@@ -45,8 +45,8 @@ export class ElevatorSchedulerService {
     }
 
     if (!bestElevator) {
-      // TODO: Throw custom error
-      throw new Error('No best elevator found');
+      // select random elevator
+      bestElevator = activeElevators[Math.floor(Math.random() * activeElevators.length)];
     }
 
     this.logger.log(

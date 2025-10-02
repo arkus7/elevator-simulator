@@ -128,6 +128,7 @@ export class ElevatorEventsGateway
     this.emitElevatorEvent(ElevatorEvent.Destination.Scheduled, {
       elevatorId: event.elevatorId,
       destination: event.destination,
+      destinationFloors: event.destinationFloors,
     });
   }
 

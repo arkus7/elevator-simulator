@@ -34,6 +34,7 @@ export class DoorSimulationService {
 
     const elevator = this.getElevator(event.elevatorId);
 
+    clearTimeout(this.doorTimeouts.get(elevator.id));
     this.doorTimeouts.set(
       elevator.id,
       setTimeout(() => {
@@ -49,6 +50,7 @@ export class DoorSimulationService {
 
     const elevator = this.getElevator(event.elevatorId);
 
+    clearTimeout(this.doorTimeouts.get(elevator.id));
     this.doorTimeouts.set(
       elevator.id,
       setTimeout(() => {
@@ -64,6 +66,7 @@ export class DoorSimulationService {
 
     const elevator = this.getElevator(event.elevatorId);
 
+    clearTimeout(this.doorTimeouts.get(elevator.id));
     this.doorTimeouts.set(
       elevator.id,
       setTimeout(() => {
