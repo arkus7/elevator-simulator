@@ -17,7 +17,6 @@ export interface BuildingState {
   elevators: Record<string, ElevatorState>;
 }
 
-// WebSocket Event Types
 export interface BaseElevatorEvent {
   elevatorId: string;
   timestamp: string;

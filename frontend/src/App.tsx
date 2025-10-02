@@ -1,50 +1,10 @@
-import { useState } from 'react'
 import './App.css'
 import ElevatorShaft from './ElevatorShaft'
 import CallButtons from './components/CallButtons'
-import type { BuildingState } from './types'
+import { useElevatorEvents } from './hooks/useElevatorEvents'
 
 function App() {
-  const [buildingState] = useState<BuildingState>({
-    config: {
-      minFloor: -2,
-      maxFloor: 5,
-    },
-    elevators: {
-      'elevator-1': {
-        id: 'Elevator 1',
-        currentFloor: 2,
-        direction: 'up',
-        doorState: 'opening',
-        motionState: 'idle',
-        destinationFloors: [],
-      },
-      'elevator-2': {
-        id: 'Elevator 2',
-        currentFloor: -1,
-        direction: 'up',
-        doorState: 'closing',
-        motionState: 'idle',
-        destinationFloors: [0, 3],
-      },
-      'elevator-3': {
-        id: 'Elevator 3',
-        currentFloor: -1,
-        direction: 'up',
-        doorState: 'open',
-        motionState: 'stopped',
-        destinationFloors: [0, 3],
-      },
-      'elevator-4': {
-        id: 'Elevator 4',
-        currentFloor: -1,
-        direction: 'up',
-        doorState: 'closed',
-        motionState: 'moving',
-        destinationFloors: [0, 3],
-      },
-    },
-  });
+  const { connected, buildingState, error, loading } = useElevatorEvents();
 
   const handleCallElevator = (floor: number, direction: 'up' | 'down') => {
     console.log(`Calling elevator to floor ${floor}, direction: ${direction}`);
@@ -80,37 +40,58 @@ function App() {
       </header>
 
       <main className="building-container">
-        <div className="building">
-          {Object.values(buildingState.elevators).map((elevator) => (
-            <ElevatorShaft
-              key={elevator.id}
-              elevator={elevator}
+        {loading || !buildingState ? (
+          <div className="loading-state">
+            {error ? (
+              <>
+                <div className="error-icon">⚠️</div>
+                <h2>Connection Error</h2>
+                <p>{error}</p>
+                <p className="hint">Make sure the backend server is running on port 3000</p>
+              </>
+            ) : (
+              <>
+                <div className="loading-spinner">🔄</div>
+                <h2>Loading Elevator System...</h2>
+                <p>Fetching building state...</p>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="building">
+            {Object.values(buildingState.elevators).map((elevator) => (
+              <ElevatorShaft
+                key={elevator.id}
+                elevator={elevator}
+                config={buildingState.config}
+                onOpenDoor={handleOpenDoor}
+                onCloseDoor={handleCloseDoor}
+                onSelectFloor={handleSelectFloor}
+              />
+            ))}
+            <CallButtons
               config={buildingState.config}
-              onOpenDoor={handleOpenDoor}
-              onCloseDoor={handleCloseDoor}
-              onSelectFloor={handleSelectFloor}
+              onCallElevator={handleCallElevator}
             />
-          ))}
-          <CallButtons
-            config={buildingState.config}
-            onCallElevator={handleCallElevator}
-          />
-        </div>
+          </div>
+        )}
       </main>
 
-      <footer className="app-footer">
-        <div className="status-bar">
-          <span className="status-item">
-            🔴 Disconnected
-          </span>
-          <span className="status-item">
-            Floors: {buildingState.config.minFloor} to {buildingState.config.maxFloor}
-          </span>
-          <span className="status-item">
-            Elevators: {Object.keys(buildingState.elevators).length}
-          </span>
-        </div>
-      </footer>
+      {buildingState && (
+        <footer className="app-footer">
+          <div className="status-bar">
+            <span className="status-item">
+              {connected ? '🟢 Connected' : '🔴 Disconnected'}
+            </span>
+            <span className="status-item">
+              Floors: {buildingState.config.minFloor} to {buildingState.config.maxFloor}
+            </span>
+            <span className="status-item">
+              Elevators: {Object.keys(buildingState.elevators).length}
+            </span>
+          </div>
+        </footer>
+      )}
     </div>
   )
 }
