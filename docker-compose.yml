@@ -16,6 +16,8 @@ services:
       - FLOOR_TRAVEL_TIME_MS=3000
       - DOOR_OPEN_CLOSE_TIME_MS=1000
       - DOOR_HOLD_TIME_MS=2000
+      - ERROR_RATE=0.1
+      - MAINTENANCE_FIX_TIME_MS=5000
       - NODE_ENV=production
     restart: unless-stopped
     healthcheck:

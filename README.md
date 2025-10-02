@@ -5,6 +5,7 @@ An elevator control system simulator with real-time updates via WebSockets.
 ## Project Structure
 
 - **backend/** - NestJS backend API with WebSocket support
+  - [README](backend/README.md)
 - **frontend/** - React frontend with Vite
 
 ## Quick Start with Docker
@@ -17,10 +18,10 @@ An elevator control system simulator with real-time updates via WebSockets.
 ### Running the Application
 
 1. Clone the repository
-2. Copy environment files and adjust if needed:
+2. Copy environment files and adjust if needed (backend):
    ```bash
+   cd backend
    cp .env.example .env
-   cp frontend/.env.example frontend/.env
    ```
 
 3. Start the application:
@@ -51,6 +52,8 @@ Edit the `docker-compose.yml` file to customize backend settings:
 - `FLOOR_TRAVEL_TIME_MS` - Time to travel between floors in milliseconds (default: 2000)
 - `DOOR_OPEN_CLOSE_TIME_MS` - Time to open/close doors in milliseconds (default: 300)
 - `DOOR_HOLD_TIME_MS` - Time doors stay open in milliseconds (default: 1000)
+- `ERROR_RATE` - Error rate for elevators (default: 0.1)
+- `MAINTENANCE_FIX_TIME_MS` - Time to fix maintenance in milliseconds (default: 5000)
 
 #### Frontend Environment Variables
 
