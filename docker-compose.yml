@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: elevator-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - ELEVATOR_COUNT=3
+      - UNDERGROUND_FLOORS=2
+      - ABOVE_GROUND_FLOORS=8
+      - FLOOR_TRAVEL_TIME_MS=3000
+      - DOOR_OPEN_CLOSE_TIME_MS=1000
+      - DOOR_HOLD_TIME_MS=2000
+      - NODE_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:3000
+        - VITE_WS_URL=http://localhost:3000
+    container_name: elevator-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  default:
+    name: elevator-network
+

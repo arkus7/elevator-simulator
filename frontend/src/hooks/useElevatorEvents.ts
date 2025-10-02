@@ -9,8 +9,9 @@ interface UseElevatorEventsReturn {
   loading: boolean;
 }
 
-const SOCKET_URL = 'http://localhost:3000/elevator-events';
-const API_URL = 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
+const SOCKET_URL = `${WS_URL}/elevator-events`;
 
 export function useElevatorEvents(): UseElevatorEventsReturn {
   const [connected, setConnected] = useState(false);

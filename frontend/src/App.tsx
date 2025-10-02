@@ -67,7 +67,6 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>🏢 Elevator Simulator</h1>
-        <p className="subtitle">Real-time Building Visualization</p>
       </header>
 
       {notification && (
